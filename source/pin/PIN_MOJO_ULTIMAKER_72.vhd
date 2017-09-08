@@ -75,7 +75,7 @@ package PIN_MOJO_ULTIMAKER_72 is
 		(IOPortTag,				x"00",	ClockLowTag,	x"03",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
 		(LEDTag,					x"00",	ClockLowTag,	x"08",	LEDAddr&PadT,					LEDNumRegs,				x"00",	LEDMPBitMask),
 		(StepGenTag,	x"02",	ClockLowTag,	x"05",	StepGenRateAddr&PadT,		StepGenNumRegs,		x"00",	StepGenMPBitMask),
-		(PWMTag,			x"00",	ClockHighTag,	x"03",	PWMValAddr&PadT,				PWMNumRegs,				x"00",	PWMMPBitMask),
+		(PWMTag,			x"00",	ClockHighTag,	x"04",	PWMValAddr&PadT,				PWMNumRegs,				x"00",	PWMMPBitMask),
 		(AVRTag,				x"00",	ClockLowTag,			x"01",	AVRAddr&PadT,				AVRNumRegs,					x"00", AVRMPBitMask),
 		(NullTag,				x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,				x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
@@ -137,7 +137,7 @@ package PIN_MOJO_ULTIMAKER_72 is
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 27	
 		IOPortTag & x"02" & PWMTag & PWMAOutPin,     					-- I/O 28
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 29	
-		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 30
+		IOPortTag & x"03" & PWMTag & PWMAOutPin,   						-- I/O 30
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 31
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 32
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 33
