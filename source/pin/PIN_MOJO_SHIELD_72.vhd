@@ -107,39 +107,39 @@ package PIN_MOJO_SHIELD_72 is
 			
 	constant PinDesc : PinDescType :=(
 -- 	Base func  sec unit sec func 	 		 sec pin		
-		IOPortTag & x"00" & StepGenTag & StepGenDirPin,       -- I/O 00
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 01
-		IOPortTag & x"00" & StepGenTag & StepGenStepPin,      -- I/O 02
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 03
-		IOPortTag & x"01" & StepGenTag & StepGenDirPin,       -- I/O 04
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 05
-		IOPortTag & x"01" & StepGenTag & StepGenStepPin,      -- I/O 06
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 07
-		IOPortTag & x"02" & StepGenTag & StepGenDirPin,       -- I/O 08
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 09
-		IOPortTag & x"02" & StepGenTag & StepGenStepPin,    	-- I/O 10
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 11
-		IOPortTag & x"03" & StepGenTag & StepGenDirPin,       -- I/O 12
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 13
-		IOPortTag & x"03" & StepGenTag & StepGenStepPin,    	-- I/O 14
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 15
-    IOPortTag & x"00" & QCountTag & QCountQAPin,          -- I/O 16
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 17
-    IOPortTag & x"00" & QCountTag & QCountQBPin,          -- I/O 18
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 19
-    IOPortTag & x"01" & QCountTag & QCountQAPin,          -- I/O 20
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 21
-    IOPortTag & x"01" & QCountTag & QCountQBPin,          -- I/O 22
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 23
-    IOPortTag & x"02" & QCountTag & QCountQAPin,          -- I/O 24
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 25
-    IOPortTag & x"02" & QCountTag & QCountQBPin,          -- I/O 26
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 27
-    IOPortTag & x"03" & QCountTag & QCountQAPin,          -- I/O 28
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 29
-    IOPortTag & x"03" & QCountTag & QCountQAPin,          -- I/O 30
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 31
-		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 32
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 00
+    IOPortTag & x"01" & QCountTag & QCountQBPin,          -- I/O 01
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 02
+    IOPortTag & x"01" & QCountTag & QCountQAPin,          -- I/O 03
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 04
+    IOPortTag & x"00" & QCountTag & QCountQAPin,          -- I/O 05
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 06
+    IOPortTag & x"00" & QCountTag & QCountQBPin,          -- I/O 07
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 08
+		IOPortTag & x"00" & StepGenTag & StepGenStepPin,      -- I/O 09
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 10
+		IOPortTag & x"00" & StepGenTag & StepGenDirPin,       -- I/O 11
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 12
+		IOPortTag & x"01" & StepGenTag & StepGenStepPin,      -- I/O 13
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 14
+		IOPortTag & x"01" & StepGenTag & StepGenDirPin,       -- I/O 15
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 16
+    IOPortTag & x"02" & QCountTag & QCountQBPin,          -- I/O 17
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 18
+    IOPortTag & x"02" & QCountTag & QCountQAPin,          -- I/O 19
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 20
+    IOPortTag & x"03" & QCountTag & QCountQAPin,          -- I/O 21
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 22
+    IOPortTag & x"03" & QCountTag & QCountQBPin,          -- I/O 23
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 24
+    IOPortTag & x"03" & StepGenTag & StepGenStepPin,      -- I/O 25
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 26
+    IOPortTag & x"03" & StepGenTag & StepGenDirPin,       -- I/O 27
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 28
+    IOPortTag & x"02" & StepGenTag & StepGenStepPin,      -- I/O 30
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 30
+    IOPortTag & x"02" & StepGenTag & StepGenDirPin,       -- I/O 31
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 32
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 33
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 34
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 35
