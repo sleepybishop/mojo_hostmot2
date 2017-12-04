@@ -634,11 +634,11 @@ package IDROMConst is
 		constant HM2DPLLTimer3Pin : std_logic_vector(7 downto 0) := x"85";
 		constant HM2DPLLTimer4Pin : std_logic_vector(7 downto 0) := x"86";
 
-	constant PktUARTTTag : std_logic_vector(7 downto 0) := x"1B";
+	constant PktUARTTTag : std_logic_vector(7 downto 0) := x"1C";
 		constant PktUTDataPin : std_logic_vector(7 downto 0) := x"81";
 		constant PktUTDrvEnPin : std_logic_vector(7 downto 0) := x"82";		
 
-	constant PktUARTRTag : std_logic_vector(7 downto 0) := x"1C";
+	constant PktUARTRTag : std_logic_vector(7 downto 0) := x"1D";
 		constant PktURDataPin : std_logic_vector(7 downto 0) := x"01";	
 
 	constant ScalerCounterTag : std_logic_vector(7 downto 0)   	:= x"1D";
