@@ -107,46 +107,47 @@ package PIN_MOJO_RAMPS_72 is
 			
 	constant PinDesc : PinDescType :=(
 -- 	Base func  sec unit sec func 	 		 sec pin		
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 00 #ZMAX
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 01 #XMIN
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 02 #YMAX
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 03 #YMIN
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 04 #XMAX
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 05 #XMIN
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 00 #XMIN
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 01 #ZMAX
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 02 #YMIN
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 03 #YMAX
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 04 #ZMIN
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 05 #XMAX
 
-    IOPortTag & x"06" & PWMTag & PWMAOutPin,              -- I/O 06 #SERVO4
-    IOPortTag & x"02" & PWMTag & PWMAOutPin,              -- I/O 07 #PWM2
-    IOPortTag & x"05" & PWMTag & PWMAOutPin,              -- I/O 08 #SERVO3
-    IOPortTag & x"01" & PWMTag & PWMAOutPin,              -- I/O 09 #PWM1
-    IOPortTag & x"04" & PWMTag & PWMAOutPin,              -- I/O 10 #SERVO2
-    IOPortTag & x"00" & PWMTag & PWMAOutPin,              -- I/O 11 #PWM0
-    IOPortTag & x"03" & PWMTag & PWMAOutPin,              -- I/O 12 #SERVO1
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 13 #LED/EN
+    IOPortTag & x"02" & PWMTag & PWMAOutPin,              -- I/O 06 #PWM2
+    IOPortTag & x"06" & PWMTag & PWMAOutPin,              -- I/O 07 #SERVO4
+    IOPortTag & x"01" & PWMTag & PWMAOutPin,              -- I/O 08 #PWM1
+    IOPortTag & x"05" & PWMTag & PWMAOutPin,              -- I/O 09 #SERVO3
+    IOPortTag & x"00" & PWMTag & PWMAOutPin,              -- I/O 10 #PWM0
+    IOPortTag & x"04" & PWMTag & PWMAOutPin,              -- I/O 11 #SERVO2
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 12 #ENABLE
+    IOPortTag & x"03" & PWMTag & PWMAOutPin,              -- I/O 13 #SERVO1
 
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 14 #PSON
-		IOPortTag & x"04" & StepGenTag & StepGenDirPin,       -- I/O 15 #E1DIR
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 16 #DNC
-		IOPortTag & x"04" & StepGenTag & StepGenStepPin,      -- I/O 17 #E1STEP
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 18 #DNC
-		IOPortTag & x"03" & StepGenTag & StepGenDirPin,       -- I/O 19 #E0DIR
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 20 #AOUT3
-		IOPortTag & x"03" & StepGenTag & StepGenStepPin,      -- I/O 21 #E0STEP
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 22 #AOUT4
-		IOPortTag & x"02" & StepGenTag & StepGenDirPin,       -- I/O 23 #ZDIR
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 24 #SER3
-		IOPortTag & x"02" & StepGenTag & StepGenStepPin,    	-- I/O 25 #ZSTEP
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 26 #SER4
-		IOPortTag & x"01" & StepGenTag & StepGenDirPin,       -- I/O 27 #YDIR
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 28 #SCK
-		IOPortTag & x"01" & StepGenTag & StepGenStepPin,    	-- I/O 29 #YSTEP
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 30 #MISO
-		IOPortTag & x"00" & StepGenTag & StepGenDirPin,       -- I/O 31 #XDIR
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 32 #MOSI
-		IOPortTag & x"00" & StepGenTag & StepGenStepPin,  		-- I/O 33 #XSTEP
-		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 34 #CS0
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 35 #SDA
+		IOPortTag & x"04" & StepGenTag & StepGenDirPin,       -- I/O 14 #E1DIR
+	  IOPortTag & x"00" & NullTag & x"00",                  -- I/O 15 #PSON
+		IOPortTag & x"04" & StepGenTag & StepGenStepPin,      -- I/O 16 #E1STEP
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 17 #EMPTY
+		IOPortTag & x"03" & StepGenTag & StepGenDirPin,       -- I/O 18 #E0DIR
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 19 #EMPTY
+		IOPortTag & x"03" & StepGenTag & StepGenStepPin,      -- I/O 20 #E0STEP
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 21 #AOUT3
+		IOPortTag & x"02" & StepGenTag & StepGenDirPin,       -- I/O 22 #ZDIR
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 23 #AOUT4
+		IOPortTag & x"02" & StepGenTag & StepGenStepPin,    	-- I/O 24 #ZSTEP
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 25 #SER3
+		IOPortTag & x"01" & StepGenTag & StepGenDirPin,       -- I/O 26 #YDIR
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 27 #SER4
+		IOPortTag & x"01" & StepGenTag & StepGenStepPin,    	-- I/O 28 #YSTEP
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 29 #SCK
+		IOPortTag & x"00" & StepGenTag & StepGenDirPin,       -- I/O 30 #XDIR
+		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 31 #MISO
+		IOPortTag & x"00" & StepGenTag & StepGenStepPin,  		-- I/O 32 #XSTEP
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 33 #MOSI
+
+    IOPortTag & x"00" & NullTag & x"00",       						-- I/O 34 #CS0
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 35 #EMPTY
     IOPortTag & x"00" & NullTag & x"00",       				    -- I/O 36 #CS1
-		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 37 #SCL
+		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 37 #EMPTY
 
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 38
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 39
