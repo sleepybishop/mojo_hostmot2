@@ -144,12 +144,12 @@ package PIN_MOJO_RAMPS_72 is
 		IOPortTag & x"00" & StepGenTag & StepGenStepPin,  		-- I/O 32 #XSTEP
     IOPortTag & x"00" & NullTag & x"00",                  -- I/O 33 #MOSI
 
-    IOPortTag & x"00" & NullTag & x"00",       						-- I/O 34 #CS0
-    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 35 #EMPTY
-    IOPortTag & x"00" & NullTag & x"00",       				    -- I/O 36 #CS1
-		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 37 #EMPTY
+    IOPortTag & x"00" & NullTag & x"00",       						-- I/O 34 #EMPTY
+    IOPortTag & x"00" & NullTag & x"00",                  -- I/O 35 #CS0
+    IOPortTag & x"00" & NullTag & x"00",       				    -- I/O 36 #EMPTY
+		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 37 #CS1
+		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 38 #EMPTY
 
-		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 38
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 39
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 40
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 41
