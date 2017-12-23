@@ -179,7 +179,7 @@ signal SPIBurstCount : std_logic_vector(6 downto 0);
 signal SPIAutoInc : std_logic;
 signal FrameTimer : std_logic_vector(15 downto 0);
 alias  FrameTimerMSB : std_logic is FrameTimer(15);
-signal FrameTimerMSBD : std_logic;
+signal  FrameTimerMSBD : std_logic;
 
 signal SPIReadRequest : std_logic;
 signal SPIReadRequest1 : std_logic;
@@ -195,20 +195,11 @@ signal UpdateSPIRegD : std_logic;
 signal NeedWrite : std_logic;
 -- ICap interface		
 
+signal LoadICap : std_logic;
 signal ReadICapCookie : std_logic;
+signal ICapI : std_logic_vector(15 downto 0);
 signal ICapClock : std_logic;
 signal ICapTimer : std_logic_vector(5 downto 0) := "000000";
-
-signal ICapO : std_logic_vector(15 downto 0);
-signal ICapI : std_logic_vector(15 downto 0);
-
-signal ICapSel : std_logic;
-signal ICapClk : std_logic;
-signal ICapRW : std_logic;
-signal LoadICapClk : std_logic;
-signal LoadICapRW : std_logic;
-signal LoadICap : std_logic;
-signal ReadICap : std_logic;
 
 signal fclk : std_logic;
 signal clkfx0: std_logic;
@@ -314,7 +305,7 @@ ahostmot2: entity work.HostMot2
 		clkmed  => clklow,				-- Processor clock
 		clkhigh =>  fclk,					-- PWM clock
 --		int => INT, 
-		iobits => IOBITS,	
+		iobits => IOBITS,			
 		adcdata => AdcSamples,
 		leds => R_LEDS	
 		);
@@ -402,11 +393,11 @@ ahostmot2: entity work.HostMot2
    )
    port map (
 --      BUSY => BUSY, 			-- 1-bit output: Busy/Ready output
-      O => ICapO,       		-- 16-bit output: Configuration data output bus
+--      O => ICapO,       		-- 16-bit output: Configuration data output bus
       CE => '0',   				-- 1-bit input: Active-Low ICAP Enable input
-      CLK => ICapClk,   		-- 1-bit input: Clock input
+      CLK => ICapClock,   		-- 1-bit input: Clock input
       I => ICapI,   				-- 16-bit input: Configuration data input bus
-      WRITE => ICapRW			-- 1-bit input: Read/Write control input
+      WRITE => '0'				-- 1-bit input: Read/Write control input
    );
 
 	gcspi: process(clklow,COM_SPICLK)		-- SPI interface with separate GClk SPI clock CPOL 0 CPHA 0
@@ -553,6 +544,8 @@ ahostmot2: entity work.HostMot2
 		COM_SPIOUT <= SPIRegOut(31);
 	end process;
 		
+	
+
 	ConfigDecode : process(AddrPtr,Read32,Write32) 
 	begin	
 		LoadSPICS  <= decodedstrobe(AddrPtr(AddrWidth-1 downto 2)&"00",x"0070",Write32);
@@ -636,3 +629,4 @@ ahostmot2: entity work.HostMot2
 		end if;
 	end process doADCtask;	
 end;
+

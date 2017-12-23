@@ -218,20 +218,11 @@ signal ReConfigreg : std_logic := '0';
 signal blinkcount : std_logic_vector(25 downto 0);
 -- ICap interface		
 
+signal LoadICap : std_logic;
 signal ReadICapCookie : std_logic;
+signal ICapI : std_logic_vector(15 downto 0);
 signal ICapClock : std_logic;
 signal ICapTimer : std_logic_vector(5 downto 0) := "000000";
-
-signal ICapO : std_logic_vector(15 downto 0);
-signal ICapI : std_logic_vector(15 downto 0);
-
-signal ICapSel : std_logic;
-signal ICapClk : std_logic;
-signal ICapRW : std_logic;
-signal LoadICapClk : std_logic;
-signal LoadICapRW : std_logic;
-signal LoadICap : std_logic;
-signal ReadICap : std_logic;
 
 signal fclk : std_logic;
 signal clkfx0: std_logic;
@@ -286,6 +277,7 @@ ahostmot2: entity work.HostMot2
 		clkhigh =>  fclk,					-- PWM clock
 --		int => INT, 
 		iobits => IOBITS,			
+		liobits => LIOBITS,			
 		adcdata => AdcSamples,
 		leds => LEDS	
 		);

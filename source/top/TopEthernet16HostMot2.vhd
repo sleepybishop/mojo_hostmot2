@@ -245,7 +245,7 @@ use work.@Pin@.all;
 	
 -- dont change anything below unless you know what you are doing -----
 	
-entity TopEthernetHostMot2 is -- for 7I80DB and 7I80HD, 7I77E and 7I76E
+entity TopEthernetHostMot2 is -- for 7I80DB,7I80HD,7I77E,7I76E,7I92,7I93,7I96,7I97
 	 generic 
 	 (
 		ThePinDesc: PinDescType := PinDesc;
@@ -271,7 +271,8 @@ entity TopEthernetHostMot2 is -- for 7I80DB and 7I80HD, 7I77E and 7I76E
 		
 	Port (	CLK : in std_logic;
 				LEDS : out std_logic_vector(LEDCount -1 downto 0);
-				IOBITS : inout std_logic_vector(IOWidth -1 downto 0);
+				IOBITS : inout std_logic_vector(IOWidth -1 downto 0);		-- external I/O bits
+				LIOBITS: inout std_logic_vector (LIOWidth -1 downto 0);	-- local I/O bits		
 				ED : inout std_logic_vector(15 downto 0);
 				ECMD : out std_logic;
 				NEREAD : out std_logic;
@@ -445,6 +446,7 @@ ahostmot2: entity work.HostMot2
 		clkhigh =>  hm2fastclock,
 --		int => INT, 
 		iobits => IOBITS,			
+		liobits => LIOBITS,			
 		rates => Rates,
 		adcdata => AdcSamples,
 		leds => HM2LEDS,	
@@ -628,16 +630,16 @@ ahostmot2: entity work.HostMot2
 	iodecode: process(ioradd, mwadd, mwrite, rseladd, wseladd, extaddress,
 							writeextdata, readextdata, riosel, wiosel, mread)
 	begin
-		rseladd <= ioradd(7 downto 0);
+		rseladd <= ioradd(7 downto 0);			-- 8 rather than 7 bits to ease hex decode addr spec
 		wseladd <= mwadd(7 downto 0);
 		
-		if ioradd(10 downto 7) = x"0" then
+		if ioradd(11 downto 7) = "00000" then	-- bottom 128 words are I/O space
 			riosel <= '1';
 		else
 			riosel <= '0';
 		end if;
 		
-		if mwadd(10 downto 7) = x"0" then
+		if mwadd(11 downto 7) = "00000" then	-- bottom 128 words are I/O space
 			wiosel <= '1';
 		else
 			wiosel <= '0';
