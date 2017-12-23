@@ -78,11 +78,13 @@ use work.NumberOfModules.all;
 use work.MaxPinsPerModule.all;	
 use work.MaxInputPinsPerModule.all;	
 use work.InputPinsPerModule.all;	
+use work.OutputPinsPerModule.all;	
 use work.MaxOutputPinsPerModule.all;	
 use work.MaxIOPinsPerModule.all;	
 use work.CountPinsInRange.all;
 use work.PinExists.all;	
 use work.ModuleExists.all;	
+use work.GetModuleHint.all;
 	
 entity HostMot2 is
   	generic
@@ -173,6 +175,7 @@ constant UARTSPerSSerial: SSerialType :=(
 (InputPinsPerModule(ThePinDesc,SSerialTag,1)),
 (InputPinsPerModule(ThePinDesc,SSerialTag,2)),
 (InputPinsPerModule(ThePinDesc,SSerialTag,3)));
+
 constant MaxUARTSPerSSerial: integer := MaxInputPinsPerModule(ThePinDesc,SSerialTag);
 constant	Twiddlers: integer := NumberOfModules(TheModuleID,TwiddlerTag);
 constant InputsPerTwiddler: integer := MaxInputPinsPerModule(ThePinDesc,TwiddlerTag)+MaxIOPinsPerModule(ThePinDesc,TwiddlerTag);
@@ -2738,7 +2741,8 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 		makepktuartrs: for i in 0 to PktUARTs -1 generate
 			pktauarrx: entity work.pktuartr	
 			generic map (
-				MaxFrameSize => 1024 )
+				MaxFrameSize => 1024,
+				Clock => ClockLow	)
 			port map (
 				clk => clklow,
 				ibus => ibus,
@@ -3576,7 +3580,6 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 		else
 			LoadIDROM <= '0';
 		end if;
-
 		if (A(15 downto 10) = IDROMAddr(7 downto 2)) and readstb = '1' then	 --  
 			ReadIDROM <= '1';
 		else
