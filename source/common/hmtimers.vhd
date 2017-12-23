@@ -94,6 +94,7 @@ end hm2dpll;
 
 architecture behavioral of hm2dpll is
 constant AccumSize: integer := 42;
+constant Ilimit: signed(23 downto 0) := x"700000";
 signal PLimit: signed(23 downto 0);
 signal Accum: signed(AccumSize-1 downto 0);
 signal Prescale : unsigned(7 downto 0);
@@ -104,6 +105,7 @@ signal Accum16: unsigned(15 downto 0);
 signal PhaseErr: signed(31 downto 0);
 alias PhaseErr23: signed(23 downto 0) is PhaseErr(31 downto 8);
 signal BaseRate: signed(31 downto 0);
+signal ITerm: signed(23 downto 0);
 signal BoundedPhaseErr: signed(23 downto 0);
 signal FilteredPhaseErr: signed(23 downto 0);
 signal DPLLCorrection: signed(23 downto 0);
@@ -158,6 +160,13 @@ begin
 				if FilterPrescaleCount = x"01" then
 					FilterPrescaleCount <= FilterPreScale;
 					FilteredPhaseErr <= FilteredPhaseErr + (resize(BoundedPhaseErr(23 downto 8),24) - resize(FilteredPhaseErr(23 downto 8),24));
+					if Iterm > Ilimit then
+						ITerm <= Ilimit;
+					end if;
+					if Iterm < -Ilimit then
+						Iterm <= -Ilimit;
+					end if;	
+					ITerm <= ITerm + resize(BoundedPhaseErr(23 downto 12),24);
 				else
 					FilterPreScaleCount <= FilterPreScaleCount -1;
 				end if;
@@ -166,7 +175,8 @@ begin
 			end if;  -- prescale;
 
 
-			DPLLCorrection <= FilteredPhaseErr + resize(BoundedPhaseErr(23 downto 4),24);		
+			DPLLCorrection <= FilteredPhaseErr + resize(BoundedPhaseErr(23 downto 4),24) + ITerm;		
+--			DPLLCorrection <= FilteredPhaseErr + resize(BoundedPhaseErr(23 downto 4),24);		
 --			DPLLCorrection <= FilteredPhaseErr;
 			
 			if syncread = '1' or syncwrite = '1' or FilteredSync = "01" then 
@@ -186,6 +196,7 @@ begin
 				PreScale <= unsigned(ibus(31 downto 24));
 				FilteredPhaseErr <= (others => '0');
 				PhaseErr <= (others => '0');
+				ITerm <= (others => '0');
 			end if;
 
 			if loadcontrol1 = '1' then
