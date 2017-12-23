@@ -72,6 +72,7 @@ package IDROMConst is
 	constant QCountRev : std_logic_vector(7 downto 0) := x"02";
 	constant MQCRev: std_logic_vector(7 downto 0) := x"03";
 	constant KUBStepGenRev : std_logic_vector(7 downto 0) := x"02";
+	constant PktUARTRRev: std_logic_vector(7 downto 0) := x"01";
 	
 	constant NullAddr : std_logic_vector(7 downto 0) := x"00";
 	constant ReadIDAddr : std_logic_vector(7 downto 0) := x"01";
@@ -112,6 +113,8 @@ package IDROMConst is
 	constant BoardName7I91 : std_logic_vector(31 downto 0) := x"31394937";		-- 7I91
 	constant BoardName7I92 : std_logic_vector(31 downto 0) := x"32394937";		-- 7I92
 	constant BoardName7I93 : std_logic_vector(31 downto 0) := x"33394937";		-- 7I93
+	constant BoardName7I96 : std_logic_vector(31 downto 0) := x"36394937";		-- 7I96
+	constant BoardName7I97 : std_logic_vector(31 downto 0) := x"37394937";		-- 7I97
 	constant BoardNameEMBM : std_logic_vector(31 downto 0) := x"4D424D45";		-- EMBM
 	constant BoardNameMOJO : std_logic_vector(31 downto 0) := x"4F4A4F4D";		-- MOJO
 	
@@ -319,7 +322,9 @@ package IDROMConst is
 	constant HM2DPLLNumRegs : std_logic_vector(7 downto 0) := x"07";
 	constant HM2DPLLMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
 
-	-- free 77
+	constant AVRAddr : std_logic_vector(7 downto 0) := x"77";
+	constant AVRNumRegs : std_logic_vector(7 downto 0) := x"08";
+	constant AVRMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
 
 	-- custom and probably deprecated:
 	constant DPLLFreqLowAddr : std_logic_vector(7 downto 0) := x"70";  -- note overlaps translate RAM!
@@ -342,10 +347,6 @@ package IDROMConst is
 	constant TranslateNumRegs : std_logic_vector(7 downto 0) := x"04";
 	constant TranslateMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
 
-	constant AVRAddr : std_logic_vector(7 downto 0) := x"88";
-	constant AVRNumRegs : std_logic_vector(7 downto 0) := x"08";
-	constant AVRMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
-
 	constant ClockLow20: integer :=  33333333;  		-- 5I20/4I65 low speed clock
 	constant ClockLow22: integer :=  48000000;		-- 5I22/5I23 low speed clock
 	constant ClockLow23: integer :=  48000000;		-- 5I22/5I23 low speed clock
@@ -365,6 +366,8 @@ package IDROMConst is
 	constant ClockLow91: integer :=  100000000;		-- 7I91 low speed clock
 	constant ClockLow92: integer :=  100000000;		-- 7I92 low speed clock
 	constant ClockLow93: integer :=  100000000;		-- 7I93 low speed clock
+	constant ClockLow96: integer :=  100000000;		-- 7I96 low speed clock
+	constant ClockLow97: integer :=  100000000;		-- 7I97 low speed clock
 
 	constant ClockMed20: integer    := 50000000;		-- 5I20/4I65 medium speed clock
 	constant ClockMed21: integer    := 72000000;		-- 5I21 medium speed clock
@@ -377,7 +380,7 @@ package IDROMConst is
 	constant ClockMed43U: integer   := 75000000;		-- 7I43U medium speed clock
 	constant ClockMed61: integer    := 100000000;	-- 7I61 medium speed clock
 	constant ClockMed68: integer    := 72000000;		-- 4I68 medium speed clock
-	constant ClockMed69: integer    := 100000000;	-- 4I69 medium speed clock
+	constant ClockMed69: integer    := 75000000;		-- 4I69 medium speed clock
 	constant ClockMedx20: integer   := 75000000;		-- 3X20 medium speed clock
 	constant ClockMed76: integer    := 100000000;	-- 7I76E medium speed clock
 	constant ClockMed80: integer    := 100000000;	-- 7I80 medium speed clock
@@ -385,6 +388,8 @@ package IDROMConst is
 	constant ClockMed91: integer    := 100000000;	-- 7I91 medium speed clock
 	constant ClockMed92: integer    := 100000000;	-- 7I92 medium speed clock
 	constant ClockMed93: integer    := 100000000;	-- 7I93 medium speed clock
+	constant ClockMed96: integer    := 100000000;	-- 7I96 medium speed clock
+	constant ClockMed97: integer    := 100000000;	-- 7I97 medium speed clock
 	
 	constant ClockHigh20: integer    := 100000000;	-- 5I20/4I65 high speed clock
 	constant ClockHigh21: integer    := 96000000;	-- 5I21 high speed clock
@@ -406,6 +411,8 @@ package IDROMConst is
 	constant ClockHigh91: integer    := 200000000;	-- 7I91 high speed clock
 	constant ClockHigh92: integer    := 200000000;	-- 7I92 high speed clock
 	constant ClockHigh93: integer    := 200000000;	-- 7I93 high speed clock
+	constant ClockHigh96: integer    := 200000000;	-- 7I96 high speed clock
+	constant ClockHigh97: integer    := 200000000;	-- 7I97 high speed clock
 	
 	constant ClockLowTag: std_logic_vector(7 downto 0) := x"01";
 
@@ -634,11 +641,11 @@ package IDROMConst is
 		constant HM2DPLLTimer3Pin : std_logic_vector(7 downto 0) := x"85";
 		constant HM2DPLLTimer4Pin : std_logic_vector(7 downto 0) := x"86";
 
-	constant PktUARTTTag : std_logic_vector(7 downto 0) := x"1C";
+	constant PktUARTTTag : std_logic_vector(7 downto 0) := x"1B";
 		constant PktUTDataPin : std_logic_vector(7 downto 0) := x"81";
 		constant PktUTDrvEnPin : std_logic_vector(7 downto 0) := x"82";		
 
-	constant PktUARTRTag : std_logic_vector(7 downto 0) := x"1D";
+	constant PktUARTRTag : std_logic_vector(7 downto 0) := x"1C";
 		constant PktURDataPin : std_logic_vector(7 downto 0) := x"01";	
 
 	constant ScalerCounterTag : std_logic_vector(7 downto 0)   	:= x"1D";
@@ -807,7 +814,7 @@ package IDROMConst is
 
 
 	constant LEDTag : std_logic_vector(7 downto 0) := x"80";
-	constant AVRTag : std_logic_vector(7 downto 0) := x"1B";
+	constant AVRTag : std_logic_vector(7 downto 0) := x"81";
 
 	constant GlobalChan: std_logic_vector(7 downto 0) := x"80";	
 	
@@ -830,7 +837,7 @@ package IDROMConst is
 	end record;
 	
 	type PinDescType is array(0 to MaxPins -1) of std_logic_vector(31 downto 0);
-
+	
 	type ModuleRecord is 							-- probably need an alternate way for smart modules
 	record	
 		GTag : std_logic_vector(7 downto 0);		
