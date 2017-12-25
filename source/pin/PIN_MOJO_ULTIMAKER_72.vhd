@@ -77,7 +77,7 @@ package PIN_MOJO_ULTIMAKER_72 is
 		(StepGenTag,      x"02",	ClockLowTag,  x"05",  StepGenRateAddr&PadT,     StepGenNumRegs,     x"00",  StepGenMPBitMask),
 		(PWMTag,          x"00",	ClockHighTag, x"07",  PWMValAddr&PadT,          PWMNumRegs,         x"00",  PWMMPBitMask),
 		(AVRTag,          x"00",	ClockLowTag,  x"01",  AVRAddr&PadT,             AVRNumRegs,         x"00",  AVRMPBitMask),
-		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
+		(BSPITag,         x"00",  ClockLowTag,  x"01",  BSPIDataAddr&PadT,        BSPINumRegs,        x"11",  BSPIMPBitMask),
 		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
 		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
 		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
@@ -138,16 +138,16 @@ package PIN_MOJO_ULTIMAKER_72 is
 		IOPortTag & x"01" & StepGenTag & StepGenDirPin,       -- I/O 26 #YDIR
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 27 #SER4
 		IOPortTag & x"01" & StepGenTag & StepGenStepPin,    	-- I/O 28 #YSTEP
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 29 #SCK
+		IOPortTag & x"00" & BSPITag & BSPIClkPin,             -- I/O 29 #SCK
 		IOPortTag & x"00" & StepGenTag & StepGenDirPin,       -- I/O 30 #XDIR
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 31 #MISO
+		IOPortTag & x"00" & BSPITag & BSPIInPin,              -- I/O 31 #MISO
 		IOPortTag & x"00" & StepGenTag & StepGenStepPin,  		-- I/O 32 #XSTEP
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 33 #MOSI
+		IOPortTag & x"00" & BSPITag & BSPIOutPin,             -- I/O 33 #MOSI
 
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 34 #EMPTY
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 35 #CS0
+		IOPortTag & x"00" & BSPITag & BSPICS0Pin,             -- I/O 35 #CS0
 		IOPortTag & x"00" & NullTag & x"00",       				    -- I/O 36 #EMPTY
-		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 37 #CS1
+		IOPortTag & x"00" & BSPITag & BSPICS1Pin,            	-- I/O 37 #CS1
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 38 #EMPTY
 
 		IOPortTag & x"00" & NullTag & x"00",       						-- I/O 39
