@@ -187,6 +187,8 @@ constant	UseDemandModeDMA: boolean := ModuleExists(TheModuleID,DMDMATag);		-- de
 constant NDRQs: integer := NumberOfModules(TheModuleID,DAQFIFOTag); -- + any other drq sources that are used
 constant BinOscs: integer := NumberOfModules(TheModuleID,BinOscTag);
 constant BinOscWidth: integer := MaxOutputPinsPerModule(ThePinDesc,BinOscTag);
+constant XfrmrOuts: integer := NumberOfModules(TheModuleID,XfrmrOutTag);
+constant XfrmrOutPins: integer := MaxOutputPinsPerModule(ThePinDesc,XfrmrOutTag);
 constant HM2DPLLs: integer := NumberOfModules(TheModuleID,HM2DPLLTag);
 constant ScalerCounters: integer := NumberOfModules(TheModuleID,ScalerCounterTag);
 constant AVRs: integer := NumberOfModules(TheModuleID,AVRTag);
@@ -2950,6 +2952,66 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 				end if;	
 			end loop;		
 		end process;		
+	end generate;
+
+	makexfrmrmod:  if XfrmrOuts >0  generate	
+	signal LoadXfrmrData: std_logic_vector(XfrmrOuts -1 downto 0);	
+	signal ReadXfrmrData: std_logic_vector(XfrmrOuts -1 downto 0);	
+	signal LoadXfrmrRate: std_logic_vector(XfrmrOuts -1 downto 0);	
+	signal ReadXfrmrRate: std_logic_vector(XfrmrOuts -1 downto 0);	
+	type  XfrmrOutputType is array(XfrmrOuts-1 downto 0) of std_logic_vector(XfrmrOutPins-1 downto 0);
+	signal XfrmrOut: XfrmrOutputType;
+	signal XfrmrRef: std_logic;
+	signal XfrmrDataSel: std_logic;	
+	signal XfrmrRateSel: std_logic;	
+	begin
+		makexfrmrs: for i in 0 to XfrmrOuts -1 generate
+			aXfrmrOut: entity work.xfrmrout
+			generic map (
+				clock=> ClockLow,
+				pins => XfrmrOutPins
+				)
+			port map ( 
+				ibus => ibus,
+				obus => obus,
+				loaddata => LoadXfrmrData(i),
+				readdata => ReadXfrmrData(i),
+				loadrate => LoadXfrmrRate(i),
+				readrate => ReadXfrmrRate(i),
+				acout => XfrmrOut(i),
+				acref=> XfrmrRef,
+				clk => clklow
+				);
+		end generate;
+		
+		XfrmrDecodeProcess : process (A,writestb,readstb,XfrmrRateSel)
+		begin		
+			if A(15 downto 8) = XfrmrDataAddr then	 	--  transformer out data
+				XfrmrDataSel <= '1';
+			else
+				XfrmrDataSel <= '0';
+			end if;
+			if A(15 downto 8) = XfrmrRateAddr then	 	--  transformer drive rate
+				XfrmrRateSel <= '1';
+			else
+				XfrmrRateSel <= '0';
+			end if;
+			LoadXfrmrData <= OneOfNDecode(XfrmrOuts,XfrmrDataSel,writestb,A(5 downto 2)); -- 16 max
+			ReadXfrmrData <= OneOfNDecode(XfrmrOuts,XfrmrDataSel,readstb,A(5 downto 2)); -- 16 max
+			LoadXfrmrRate <= OneOfNDecode(XfrmrOuts,XfrmrRateSel,writestb,A(5 downto 2)); -- 16 max
+			ReadXfrmrRate <= OneOfNDecode(XfrmrOuts,XfrmrRateSel,readstb,A(5 downto 2)); -- 16 max
+		end process XfrmrDecodeProcess;
+
+		DoXfrmrPins: process(XfrmrOut)
+		begin	
+			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins 
+				if ThePinDesc(i)(15 downto 8) = XfrmrOutTag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...											
+					if (ThePinDesc(i)(7 downto 0) and x"C0") = x"80" then 	-- outs match 8X .. BX 
+						AltData(i) <=   XfrmrOut(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(5 downto 0))-1);	--  max ports, more than 8 requires adding to IDROM pins					
+					end if;
+				end if;
+			end loop;	
+		end process;
 	end generate;
 
 	makewavegenmod:  if WaveGens >0  generate	

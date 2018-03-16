@@ -347,6 +347,11 @@ package IDROMConst is
 	constant TranslateNumRegs : std_logic_vector(7 downto 0) := x"04";
 	constant TranslateMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
 
+	constant XFrmrDataAddr : std_logic_vector(7 downto 0) := x"7D";
+	constant XFrmrRateAddr : std_logic_vector(7 downto 0) := x"7E";
+	constant XFrmrNumRegs : std_logic_vector(7 downto 0) := x"02";
+	constant XFrmrMPBitMask : std_logic_vector(31 downto 0) := x"00000003";
+
 	constant ClockLow20: integer :=  33333333;  		-- 5I20/4I65 low speed clock
 	constant ClockLow22: integer :=  48000000;		-- 5I22/5I23 low speed clock
 	constant ClockLow23: integer :=  48000000;		-- 5I22/5I23 low speed clock
@@ -812,6 +817,39 @@ package IDROMConst is
 		constant	TwiddlerOut1DPin: std_logic_vector(7 downto 0) := x"9E";
 		constant	TwiddlerOut1EPin: std_logic_vector(7 downto 0) := x"9F";
 
+    constant	XfrmrOutTag	: std_logic_vector(7 downto 0) := x"C3";
+		constant	XfrmrOut0Pin: std_logic_vector(7 downto 0) := x"81";
+		constant	XfrmrOut1Pin: std_logic_vector(7 downto 0) := x"82";
+		constant	XfrmrOut2Pin: std_logic_vector(7 downto 0) := x"83";
+		constant	XfrmrOut3Pin: std_logic_vector(7 downto 0) := x"84";
+		constant	XfrmrOut4Pin: std_logic_vector(7 downto 0) := x"85";
+		constant	XfrmrOut5Pin: std_logic_vector(7 downto 0) := x"86";
+		constant	XfrmrOut6Pin: std_logic_vector(7 downto 0) := x"87";
+		constant	XfrmrOut7Pin: std_logic_vector(7 downto 0) := x"88";
+		constant	XfrmrOut8Pin: std_logic_vector(7 downto 0) := x"89";
+		constant	XfrmrOut9Pin: std_logic_vector(7 downto 0) := x"8A";
+		constant	XfrmrOutAPin: std_logic_vector(7 downto 0) := x"8B";
+		constant	XfrmrOutBPin: std_logic_vector(7 downto 0) := x"8C";
+		constant	XfrmrOutCPin: std_logic_vector(7 downto 0) := x"8D";
+		constant	XfrmrOutDPin: std_logic_vector(7 downto 0) := x"8E";
+		constant	XfrmrOutEPin: std_logic_vector(7 downto 0) := x"8F";
+		constant	XfrmrOutFPin: std_logic_vector(7 downto 0) := x"90";
+		constant	XfrmrOut10Pin: std_logic_vector(7 downto 0) := x"91";
+		constant	XfrmrOut11Pin: std_logic_vector(7 downto 0) := x"92";
+		constant	XfrmrOut12Pin: std_logic_vector(7 downto 0) := x"93";
+		constant	XfrmrOut13Pin: std_logic_vector(7 downto 0) := x"94";
+		constant	XfrmrOut14Pin: std_logic_vector(7 downto 0) := x"95";
+		constant	XfrmrOut15Pin: std_logic_vector(7 downto 0) := x"96";
+		constant	XfrmrOut16Pin: std_logic_vector(7 downto 0) := x"97";
+		constant	XfrmrOut17Pin: std_logic_vector(7 downto 0) := x"98";
+		constant	XfrmrOut18Pin: std_logic_vector(7 downto 0) := x"99";
+		constant	XfrmrOut19Pin: std_logic_vector(7 downto 0) := x"9A";
+		constant	XfrmrOut1APin: std_logic_vector(7 downto 0) := x"9B";
+		constant	XfrmrOut1BPin: std_logic_vector(7 downto 0) := x"9C";
+		constant	XfrmrOut1CPin: std_logic_vector(7 downto 0) := x"9D";
+		constant	XfrmrOut1DPin: std_logic_vector(7 downto 0) := x"9E";
+		constant	XfrmrOut1EPin: std_logic_vector(7 downto 0) := x"9F";			
+		constant  XfrmrRefPin: std_logic_vector(7 downto 0) := x"A0";
 
 	constant LEDTag : std_logic_vector(7 downto 0) := x"80";
 	constant AVRTag : std_logic_vector(7 downto 0) := x"81";
