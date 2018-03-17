@@ -1895,7 +1895,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal LoadBSPIData: std_logic_vector(BSPIs -1 downto 0);
 	signal ReadBSPIData: std_logic_vector(BSPIs -1 downto 0);     
 	signal LoadBSPIDescriptor: std_logic_vector(BSPIs -1 downto 0);
-	signal ReadBSPIFIFOCOunt: std_logic_vector(BSPIs -1 downto 0);
+	signal ReadBSPIFIFOCount: std_logic_vector(BSPIs -1 downto 0);
 	signal ClearBSPIFIFO: std_logic_vector(BSPIs -1 downto 0);
 	signal BSPIClk: std_logic_vector(BSPIs -1 downto 0);
 	signal BSPIIn: std_logic_vector(BSPIs -1 downto 0);
@@ -1951,7 +1951,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			LoadBSPIData <= OneOfNDecode(BSPIs,BSPIDataSel,writestb,A(7 downto 6)); -- 4 max
 			ReadBSPIData <= OneOfNDecode(BSPIs,BSPIDataSel,Readstb,A(7 downto 6));
 			LoadBSPIDescriptor<= OneOfNDecode(BSPIs,BSPIDescriptorSel,writestb,A(5 downto 2));
-			ReadBSPIFIFOCOunt <= OneOfNDecode(BSPIs,BSPIFIFOCountSel,Readstb,A(5 downto 2));
+			ReadBSPIFIFOCount <= OneOfNDecode(BSPIs,BSPIFIFOCountSel,Readstb,A(5 downto 2));
 			ClearBSPIFIFO <= OneOfNDecode(BSPIs,BSPIFIFOCountSel,writestb,A(5 downto 2));
 		end process BSPIDecodeProcess;
 
@@ -1982,7 +1982,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal LoadDBSPIData: std_logic_vector(DBSPIs -1 downto 0);
 	signal ReadDBSPIData: std_logic_vector(DBSPIs -1 downto 0);     
 	signal LoadDBSPIDescriptor: std_logic_vector(DBSPIs -1 downto 0);
-	signal ReadDBSPIFIFOCOunt: std_logic_vector(DBSPIs -1 downto 0);
+	signal ReadDBSPIFIFOCount: std_logic_vector(DBSPIs -1 downto 0);
 	signal ClearDBSPIFIFO: std_logic_vector(DBSPIs -1 downto 0);
 	signal DBSPIClk: std_logic_vector(DBSPIs -1 downto 0);
 	signal DBSPIIn: std_logic_vector(DBSPIs -1 downto 0);
@@ -2037,7 +2037,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			LoadDBSPIData <= OneOfNDecode(DBSPIs,DBSPIDataSel,writestb,A(7 downto 6)); -- 4 max
 			ReadDBSPIData <= OneOfNDecode(DBSPIs,DBSPIDataSel,Readstb,A(7 downto 6));
 			LoadDBSPIDescriptor<= OneOfNDecode(DBSPIs,DBSPIDescriptorSel,writestb,A(5 downto 2));
-			ReadDBSPIFIFOCOunt <= OneOfNDecode(DBSPIs,DBSPIFIFOCountSel,Readstb,A(5 downto 2));
+			ReadDBSPIFIFOCount <= OneOfNDecode(DBSPIs,DBSPIFIFOCountSel,Readstb,A(5 downto 2));
 			ClearDBSPIFIFO <= OneOfNDecode(DBSPIs,DBSPIFIFOCountSel,writestb,A(5 downto 2));
 		end process DBSPIDecodeProcess;
 
