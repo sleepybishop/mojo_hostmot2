@@ -191,7 +191,7 @@ constant XfrmrOuts: integer := NumberOfModules(TheModuleID,XfrmrOutTag);
 constant XfrmrOutPins: integer := MaxOutputPinsPerModule(ThePinDesc,XfrmrOutTag);
 constant HM2DPLLs: integer := NumberOfModules(TheModuleID,HM2DPLLTag);
 constant ScalerCounters: integer := NumberOfModules(TheModuleID,ScalerCounterTag);
-constant AVRs: integer := NumberOfModules(TheModuleID,AVRTag);
+constant ADCs: integer := NumberOfModules(TheModuleID,ADCTag);
 
 -- extract the needed Stepgen table width from the max pin# used with a stepgen tag
 constant StepGenTableWidth: integer := MaxPinsPerModule(ThePinDesc,StepGenTag);
@@ -295,8 +295,8 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			obus => obus
 			);
 
-	makeavrs: for i in 0 to AVRs -1 generate
-		aavr : entity work.avr
+	makeadcs: for i in 0 to ADCs -1 generate
+		aadc : entity work.adc
 			generic map (
 				buswidth => BusWidth
 			)
@@ -1911,7 +1911,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			bspi: entity work.BufferedSPI
 			generic map (
 				cswidth => BSPICSWidth,
-				gatedcs => false)		
+				gatedcs => true)		
 			port map (
 				clk  => clklow,
 				ibus => ibus,
@@ -3684,7 +3684,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			ReadID <= '0';
 		end if;
 
-		if A(15 downto 8) = AVRAddr and readstb = '1' then --
+		if A(15 downto 8) = ADCAddr and readstb = '1' then --
 			ReadADC <= '1';
 		else
 			ReadADC <= '0';

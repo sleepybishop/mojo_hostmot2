@@ -66,7 +66,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 use work.IDROMConst.all;
 
-entity avr is
+entity adc is
 	generic (
 		buswidth : integer
 	);
@@ -76,12 +76,12 @@ entity avr is
 		addr : in  std_logic_vector(3 downto 1);
 		obus : out  std_logic_vector (buswidth-1 downto 0)
 	);
-end avr;
+end adc;
 
-architecture Behavioral of avr is
+architecture Behavioral of adc is
 
 begin
-	avrproc: process (readadc,addr)
+	adcproc: process (readadc,addr)
 	begin
 		obus <= ( others => 'Z');
 		if readadc = '1' then

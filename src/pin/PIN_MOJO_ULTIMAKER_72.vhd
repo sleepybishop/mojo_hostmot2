@@ -76,7 +76,7 @@ package PIN_MOJO_ULTIMAKER_72 is
 		(LEDTag,          x"00",	ClockLowTag,  x"08",  LEDAddr&PadT,             LEDNumRegs,         x"00",  LEDMPBitMask),
 		(StepGenTag,      x"02",	ClockLowTag,  x"05",  StepGenRateAddr&PadT,     StepGenNumRegs,     x"00",  StepGenMPBitMask),
 		(PWMTag,          x"00",	ClockHighTag, x"08",  PWMValAddr&PadT,          PWMNumRegs,         x"00",  PWMMPBitMask),
-		(AVRTag,          x"00",	ClockLowTag,  x"01",  AVRAddr&PadT,             AVRNumRegs,         x"00",  AVRMPBitMask),
+		(ADCTag,          x"00",	ClockLowTag,  x"01",  ADCAddr&PadT,             ADCNumRegs,         x"00",  ADCMPBitMask),
 		(BSPITag,         x"00",  ClockLowTag,  x"02",  BSPIDataAddr&PadT,        BSPINumRegs,        x"11",  BSPIMPBitMask),
 		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
 		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
@@ -114,11 +114,11 @@ package PIN_MOJO_ULTIMAKER_72 is
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 04 # XMIN
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 05 # XMAX
 
-		IOPortTag & x"00" & PWMTag & PWMAOutPin,              -- I/O 06 #PWM0
+		IOPortTag & x"02" & PWMTag & PWMAOutPin,              -- I/O 06 #PWM2
 		IOPortTag & x"06" & PWMTag & PWMAOutPin,              -- I/O 07 #SERVO4
 		IOPortTag & x"01" & PWMTag & PWMAOutPin,              -- I/O 08 #PWM1
 		IOPortTag & x"05" & PWMTag & PWMAOutPin,              -- I/O 09 #SERVO3
-		IOPortTag & x"02" & PWMTag & PWMAOutPin,              -- I/O 10 #PWM2
+		IOPortTag & x"00" & PWMTag & PWMAOutPin,              -- I/O 10 #PWM0
 		IOPortTag & x"04" & PWMTag & PWMAOutPin,              -- I/O 11 #SERVO2
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 12 #ENABLE
 		IOPortTag & x"03" & PWMTag & PWMAOutPin,              -- I/O 13 #SERVO1

@@ -322,9 +322,9 @@ package IDROMConst is
 	constant HM2DPLLNumRegs : std_logic_vector(7 downto 0) := x"07";
 	constant HM2DPLLMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
 
-	constant AVRAddr : std_logic_vector(7 downto 0) := x"77";
-	constant AVRNumRegs : std_logic_vector(7 downto 0) := x"08";
-	constant AVRMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
+	constant ADCAddr : std_logic_vector(7 downto 0) := x"77";
+	constant ADCNumRegs : std_logic_vector(7 downto 0) := x"08";
+	constant ADCMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
 
 	-- custom and probably deprecated:
 	constant DPLLFreqLowAddr : std_logic_vector(7 downto 0) := x"70";  -- note overlaps translate RAM!
@@ -852,7 +852,7 @@ package IDROMConst is
 		constant  XfrmrRefPin: std_logic_vector(7 downto 0) := x"A0";
 
 	constant LEDTag : std_logic_vector(7 downto 0) := x"80";
-	constant AVRTag : std_logic_vector(7 downto 0) := x"81";
+	constant ADCTag : std_logic_vector(7 downto 0) := x"81";
 
 	constant GlobalChan: std_logic_vector(7 downto 0) := x"80";	
 	

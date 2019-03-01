@@ -77,7 +77,7 @@ package PIN_MOJO_SHIELD_72 is
 		(StepGenTag,      x"02",	ClockLowTag,  x"04",  StepGenRateAddr&PadT,     StepGenNumRegs,     x"00",  StepGenMPBitMask),
     (QcountTag,       x"02",  ClockLowTag,  x"04",  QcounterAddr&PadT,        QCounterNumRegs,    x"00",  QCounterMPBitMask),
 		(PWMTag,          x"00",	ClockHighTag, x"08",  PWMValAddr&PadT,          PWMNumRegs,         x"00",  PWMMPBitMask),
-		(AVRTag,          x"00",	ClockLowTag,  x"01",  AVRAddr&PadT,             AVRNumRegs,         x"00",  AVRMPBitMask),
+		(ADCTag,          x"00",	ClockLowTag,  x"01",  ADCAddr&PadT,             ADCNumRegs,         x"00",  ADCMPBitMask),
 		(BSPITag,         x"00",  ClockLowTag,  x"01",  BSPIDataAddr&PadT,        BSPINumRegs,        x"11",  BSPIMPBitMask),
 		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
 		(NullTag,         x"00",  NullTag,      x"00",  NullAddr&PadT,            x"00",              x"00",  x"00000000"),
