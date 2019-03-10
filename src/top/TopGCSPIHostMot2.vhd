@@ -127,7 +127,7 @@ use work.@Pin@.all;
 	
 -- dont change anything below unless you know what you are doing -----
 	
-entity TopGCSPIHostMot2 is -- for 7I90 in EPP mode
+entity TopGCSPIHostMot2 is -- for 7I90/7C80/7C81 in SPI mode
 	 generic 
 	 (
 		ThePinDesc: PinDescType := PinDesc;
@@ -427,21 +427,20 @@ ahostmot2: entity work.HostMot2
 					UpdateSPIReg <= '1';
 				end if;	
 
+
+			end if;	-- CS = 0
+		end if;	-- clk rising edge
+		
+		if Falling_edge(COM_SPICLK) then									-- shift data out on falling edge						
+			if COM_SPICS = '0' then
 				if (SPICommand = SPIWrite) and (SPIBitCount = "10110") and SPIHeader = '0' then -- write request at bit 22
 					NeedWrite <= '1';
 				end if;	
-
 				if NeedWrite = '1' and SPIBitCount = "00000" then
 					SPIWriteRequest <= '1';
 					HM2DataInL <= SPIRegIn;
 					NeedWrite <= '0';
 				end if;	
-
-			end if;	-- CS = 0
-		end if;	-- clk falling edge
-		
-		if Falling_edge(COM_SPICLK) then									-- shift data out on falling edge						
-			if COM_SPICS = '0' then
 				if UpDateSPIReg = '1' then
 					UpDateSPIRegD <= '1';
 				end if;	
