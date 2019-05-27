@@ -1,9 +1,9 @@
 ## fpga firmware
-the firmware is a simplified version of the [mesa hostmot2 firmware](https://github.com/LinuxCNC/hostmot2-firmware) tailored to support only newer hardware.
- * mesa 6i25
- * mesa 7i90
- * mesa 7i92
- * embmicro mojo v3
+this is a modified version of the [mesa hostmot2 firmware](https://github.com/LinuxCNC/hostmot2-firmware) tailored to support the embedded micro mojo v3.
+ 
+ * adc support via avr interface
+ * 72 pin configs
+ * decoded bspi mode by default
  
 ## raspberry pi 3 + mojo v3 fpga wiring
 
