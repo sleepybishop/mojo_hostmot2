@@ -113,8 +113,14 @@ package IDROMConst is
 	constant BoardName7I91 : std_logic_vector(31 downto 0) := x"31394937";		-- 7I91
 	constant BoardName7I92 : std_logic_vector(31 downto 0) := x"32394937";		-- 7I92
 	constant BoardName7I93 : std_logic_vector(31 downto 0) := x"33394937";		-- 7I93
+	constant BoardName7I94 : std_logic_vector(31 downto 0) := x"34394937";		-- 7I93
+	constant BoardName7I95 : std_logic_vector(31 downto 0) := x"35394937";		-- 7I95
 	constant BoardName7I96 : std_logic_vector(31 downto 0) := x"36394937";		-- 7I96
 	constant BoardName7I97 : std_logic_vector(31 downto 0) := x"37394937";		-- 7I97
+	constant BoardName7I98 : std_logic_vector(31 downto 0) := x"38394937";		-- 7I98
+	constant BoardName7IA0 : std_logic_vector(31 downto 0) := x"30414937";		-- 7IA0
+	constant BoardName7C80 : std_logic_vector(31 downto 0) := x"30384337";		-- 7C80
+	constant BoardName7C81 : std_logic_vector(31 downto 0) := x"31384337";		-- 7C81
 	constant BoardNameEMBM : std_logic_vector(31 downto 0) := x"4D424D45";		-- EMBM
 	constant BoardNameMOJO : std_logic_vector(31 downto 0) := x"4F4A4F4D";		-- MOJO
 	
@@ -159,7 +165,11 @@ package IDROMConst is
 	constant ScalerTimerAddr : std_logic_vector(7 downto 0) := x"1D";
 	constant ScalerNumRegs : std_logic_vector(7 downto 0) := x"03";
 	constant ScalerMPBitMask : std_logic_vector(31 downto 0) := x"00000003";
-	-- free 1E-1F	
+
+	constant CPDriveEnaAddr : std_logic_vector(7 downto 0) := x"1E";
+	constant CPDriveNumRegs : std_logic_vector(7 downto 0) := x"01";
+	constant CPDriveMPBitMask : std_logic_vector(31 downto 0) := x"00000001";
+	-- free 1F	
 	
 	constant StepGenRateAddr : std_logic_vector(7 downto 0) := x"20";	
 	constant StepGenAccumAddr : std_logic_vector(7 downto 0) := x"21";		
@@ -351,7 +361,41 @@ package IDROMConst is
 	constant XFrmrRateAddr : std_logic_vector(7 downto 0) := x"7E";
 	constant XFrmrNumRegs : std_logic_vector(7 downto 0) := x"02";
 	constant XFrmrMPBitMask : std_logic_vector(31 downto 0) := x"00000003";
+	
+-- addresses > 0x7FFF cannot be used by EPP configs since the address MSB is used
+-- as a autoinc address flag but this is OK for all others (PCI/Ethernet/SPI/Serial)
 
+	constant InMuxControlAddr : std_logic_vector(7 downto 0) := x"80";
+	constant InMuxFilterAddr : std_logic_vector(7 downto 0) := x"81";
+	constant InMuxFilteredDataAddr : std_logic_vector(7 downto 0) := x"82";
+	constant InMuxRawDataAddr : std_logic_vector(7 downto 0) := x"83";
+	constant InMuxMPGAddr : std_logic_vector(7 downto 0) := x"84";
+	constant InMuxNumRegs : std_logic_vector(7 downto 0) := x"05";
+	constant InMuxMPBitMask : std_logic_vector(31 downto 0) := x"0000001F";
+
+	constant InMControlAddr : std_logic_vector(7 downto 0) := x"85";
+	constant InMFilterAddr : std_logic_vector(7 downto 0) := x"86";
+	constant InMFilteredDataAddr : std_logic_vector(7 downto 0) := x"87";
+	constant InMRawDataAddr : std_logic_vector(7 downto 0) := x"88";
+	constant InMMPGAddr : std_logic_vector(7 downto 0) := x"89";
+	constant InMNumRegs : std_logic_vector(7 downto 0) := x"05";
+	constant InMMPBitMask : std_logic_vector(31 downto 0) := x"0000001F";
+
+	constant DPainterRateAddr : std_logic_vector(7 downto 0) := x"8A";	
+	constant DPainterAccumAddr : std_logic_vector(7 downto 0) := x"8B";		
+	constant DPainterMode0Addr : std_logic_vector(7 downto 0) := x"8C";
+	constant DPainterMode1Addr : std_logic_vector(7 downto 0) := x"8D";
+	constant DPainterStartCompAddr : std_logic_vector(7 downto 0) := x"8E";
+	constant DPainterStopCompAddr : std_logic_vector(7 downto 0) := x"8F";
+	constant DPainterDataAddr : std_logic_vector(7 downto 0) := x"90";
+	constant DPainterNumRegs : std_logic_vector(7 downto 0) := x"07";
+	constant DPainterMPBitMask : std_logic_vector(31 downto 0) := x"0000007F";
+
+	constant DSADAddr : std_logic_vector(7 downto 0) := x"90";	
+	constant DSADNumRegs : std_logic_vector(7 downto 0) := x"01";
+	constant DSADMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
+
+	
 	constant ClockLow20: integer :=  33333333;  		-- 5I20/4I65 low speed clock
 	constant ClockLow22: integer :=  48000000;		-- 5I22/5I23 low speed clock
 	constant ClockLow23: integer :=  48000000;		-- 5I22/5I23 low speed clock
@@ -371,8 +415,14 @@ package IDROMConst is
 	constant ClockLow91: integer :=  100000000;		-- 7I91 low speed clock
 	constant ClockLow92: integer :=  100000000;		-- 7I92 low speed clock
 	constant ClockLow93: integer :=  100000000;		-- 7I93 low speed clock
+	constant ClockLow94: integer :=  100000000;		-- 7I94 low speed clock
+	constant ClockLow95: integer :=  100000000;		-- 7I95 low speed clock
 	constant ClockLow96: integer :=  100000000;		-- 7I96 low speed clock
 	constant ClockLow97: integer :=  100000000;		-- 7I97 low speed clock
+	constant ClockLow98: integer :=  100000000;		-- 7I98 low speed clock
+	constant ClockLowA0: integer :=  100000000;		-- 7IA0 low speed clock
+	constant ClockLowC80: integer :=  100000000;		-- 7C80 low speed clock
+	constant ClockLowC81: integer :=  100000000;		-- 7C81 low speed clock
 
 	constant ClockMed20: integer    := 50000000;		-- 5I20/4I65 medium speed clock
 	constant ClockMed21: integer    := 72000000;		-- 5I21 medium speed clock
@@ -393,8 +443,14 @@ package IDROMConst is
 	constant ClockMed91: integer    := 100000000;	-- 7I91 medium speed clock
 	constant ClockMed92: integer    := 100000000;	-- 7I92 medium speed clock
 	constant ClockMed93: integer    := 100000000;	-- 7I93 medium speed clock
+	constant ClockMed94: integer    := 100000000;	-- 7I94 medium speed clock
+	constant ClockMed95: integer    := 100000000;	-- 7I95 medium speed clock
 	constant ClockMed96: integer    := 100000000;	-- 7I96 medium speed clock
 	constant ClockMed97: integer    := 100000000;	-- 7I97 medium speed clock
+	constant ClockMed98: integer    := 100000000;	-- 7I98 medium speed clock
+	constant ClockMedA0: integer    := 100000000;	-- 7IA0 medium speed clock
+	constant ClockMedC80: integer    :=  100000000;	-- 7C80 medium speed clock
+	constant ClockMedC81: integer    :=  100000000;	-- 7C81 medium speed clock
 	
 	constant ClockHigh20: integer    := 100000000;	-- 5I20/4I65 high speed clock
 	constant ClockHigh21: integer    := 96000000;	-- 5I21 high speed clock
@@ -416,8 +472,14 @@ package IDROMConst is
 	constant ClockHigh91: integer    := 200000000;	-- 7I91 high speed clock
 	constant ClockHigh92: integer    := 200000000;	-- 7I92 high speed clock
 	constant ClockHigh93: integer    := 200000000;	-- 7I93 high speed clock
+	constant ClockHigh94: integer    := 200000000;	-- 7I94 high speed clock
+	constant ClockHigh95: integer    := 200000000;	-- 7I95 high speed clock
 	constant ClockHigh96: integer    := 200000000;	-- 7I96 high speed clock
 	constant ClockHigh97: integer    := 200000000;	-- 7I97 high speed clock
+	constant ClockHigh98: integer    := 200000000;	-- 7I98 high speed clock
+	constant ClockHighA0: integer    := 200000000;	-- 7IA0 high speed clock
+	constant ClockHighC80: integer  :=  200000000;	-- 7C80 high speed clock
+	constant ClockHighC81: integer  :=  200000000;	-- 7C81 high speed clock
 	
 	constant ClockLowTag: std_logic_vector(7 downto 0) := x"01";
 
@@ -656,6 +718,60 @@ package IDROMConst is
 	constant ScalerCounterTag : std_logic_vector(7 downto 0)   	:= x"1D";
 		constant ScalerCounterInA : std_logic_vector(7 downto 0)	:= x"01";
 		constant ScalerCounterInB : std_logic_vector(7 downto 0)	:= x"02";
+
+	constant InMuxTag	: std_logic_vector(7 downto 0) := x"1E";
+		constant InMuxAddr0Pin : std_logic_vector(7 downto 0) := x"81";	
+		constant InMuxAddr1Pin : std_logic_vector(7 downto 0) := x"82";	
+		constant InMuxAddr2Pin : std_logic_vector(7 downto 0) := x"83";	
+		constant InMuxAddr3Pin : std_logic_vector(7 downto 0) := x"84";	
+		constant InMuxAddr4Pin : std_logic_vector(7 downto 0) := x"85";	
+		constant InMuxDataPin : std_logic_vector(7 downto 0) := x"01";	
+	constant InMuxWidth0Tag	: std_logic_vector(7 downto 0) := x"1F";
+	constant InMuxWidth1Tag	: std_logic_vector(7 downto 0) := x"20";
+	constant InMuxWidth2Tag	: std_logic_vector(7 downto 0) := x"21";
+	constant InMuxWidth3Tag	: std_logic_vector(7 downto 0) := x"22";
+
+	constant InMTag	: std_logic_vector(7 downto 0) := x"23";		
+		constant InMData0Pin : std_logic_vector(7 downto 0) := x"01";
+		constant InMData1Pin : std_logic_vector(7 downto 0) := x"02";
+		constant InMData2Pin : std_logic_vector(7 downto 0) := x"03";
+		constant InMData3Pin : std_logic_vector(7 downto 0) := x"04";
+		constant InMData4Pin : std_logic_vector(7 downto 0) := x"05";
+		constant InMData5Pin : std_logic_vector(7 downto 0) := x"06";
+		constant InMData6Pin : std_logic_vector(7 downto 0) := x"07";
+		constant InMData7Pin : std_logic_vector(7 downto 0) := x"08";
+		constant InMData8Pin : std_logic_vector(7 downto 0) := x"09";
+		constant InMData9Pin : std_logic_vector(7 downto 0) := x"0A";
+		constant InMDataAPin : std_logic_vector(7 downto 0) := x"0B";
+		constant InMDataBPin : std_logic_vector(7 downto 0) := x"0C";
+		constant InMDataCPin : std_logic_vector(7 downto 0) := x"0D";
+		constant InMDataDPin : std_logic_vector(7 downto 0) := x"0E";
+		constant InMDataEPin : std_logic_vector(7 downto 0) := x"0F";
+		constant InMDataFPin : std_logic_vector(7 downto 0) := x"10";
+		constant InMData10Pin : std_logic_vector(7 downto 0) := x"11";
+		constant InMData11Pin : std_logic_vector(7 downto 0) := x"12";
+		constant InMData12Pin : std_logic_vector(7 downto 0) := x"13";
+		constant InMData13Pin : std_logic_vector(7 downto 0) := x"14";
+		constant InMData14Pin : std_logic_vector(7 downto 0) := x"15";
+		constant InMData15Pin : std_logic_vector(7 downto 0) := x"16";
+		constant InMData16Pin : std_logic_vector(7 downto 0) := x"17";
+		constant InMData17Pin : std_logic_vector(7 downto 0) := x"18";
+		constant InMData18Pin : std_logic_vector(7 downto 0) := x"19";
+		constant InMData19Pin : std_logic_vector(7 downto 0) := x"1A";
+		constant InMData1APin : std_logic_vector(7 downto 0) := x"1B";
+		constant InMData1BPin : std_logic_vector(7 downto 0) := x"1C";
+		constant InMData1CPin : std_logic_vector(7 downto 0) := x"1D";
+		constant InMData1DPin : std_logic_vector(7 downto 0) := x"1E";
+		constant InMData1EPin : std_logic_vector(7 downto 0) := x"1F";
+		constant InMData1FPin : std_logic_vector(7 downto 0) := x"20";
+	constant InMWidth0Tag	: std_logic_vector(7 downto 0) := x"24";
+	constant InMWidth1Tag	: std_logic_vector(7 downto 0) := x"25";
+	constant InMWidth2Tag	: std_logic_vector(7 downto 0) := x"26";
+	constant InMWidth3Tag	: std_logic_vector(7 downto 0) := x"27";
+
+	constant	DPainterTag : std_logic_vector(7 downto 0) := x"2A";
+		constant	DPainterDataPin : std_logic_vector(7 downto 0) := x"81";
+		constant	DpainterClkPin : std_logic_vector(7 downto 0) := x"82";
 		
 	constant LIOPortTag : std_logic_vector(7 downto 0) := x"40";
 
@@ -718,7 +834,22 @@ package IDROMConst is
 		constant SSerialTXEnCPin : std_logic_vector(7 downto 0) := x"9D";	
 		constant SSerialTXEnDPin : std_logic_vector(7 downto 0) := x"9E";	
 		constant SSerialTXEnEPin : std_logic_vector(7 downto 0) := x"9F";	
-		constant SSerialTestPin : std_logic_vector(7 downto 0) := x"A1";	
+		constant SSerialNTXEn0Pin : std_logic_vector(7 downto 0) := x"A1";	
+		constant SSerialNTXEn1Pin : std_logic_vector(7 downto 0) := x"A2";	
+		constant SSerialNTXEn2Pin : std_logic_vector(7 downto 0) := x"A3";	
+		constant SSerialNTXEn3Pin : std_logic_vector(7 downto 0) := x"A4";	
+		constant SSerialNTXEn4Pin : std_logic_vector(7 downto 0) := x"A5";	
+		constant SSerialNTXEn5Pin : std_logic_vector(7 downto 0) := x"A6";	
+		constant SSerialNTXEn6Pin : std_logic_vector(7 downto 0) := x"A7";	
+		constant SSerialNTXEn7Pin : std_logic_vector(7 downto 0) := x"A8";	
+		constant SSerialNTXEn8Pin : std_logic_vector(7 downto 0) := x"A9";	
+		constant SSerialNTXEn9Pin : std_logic_vector(7 downto 0) := x"AA";	
+		constant SSerialNTXEnAPin : std_logic_vector(7 downto 0) := x"AB";	
+		constant SSerialNTXEnBPin : std_logic_vector(7 downto 0) := x"AC";	
+		constant SSerialNTXEnCPin : std_logic_vector(7 downto 0) := x"AD";	
+		constant SSerialNTXEnDPin : std_logic_vector(7 downto 0) := x"AE";	
+		constant SSerialNTXEnEPin : std_logic_vector(7 downto 0) := x"AF";	
+		constant SSerialTestPin : std_logic_vector(7 downto 0) := x"B1";	
 
 	constant TwiddlerTag: std_logic_vector(7 downto 0) := x"C2";
 		constant	TwiddlerIn0Pin: std_logic_vector(7 downto 0) := x"01";	-- note 31 pins max
@@ -851,6 +982,61 @@ package IDROMConst is
 		constant	XfrmrOut1EPin: std_logic_vector(7 downto 0) := x"9F";			
 		constant  XfrmrRefPin: std_logic_vector(7 downto 0) := x"A0";
 
+	constant	CPDriveTag	: std_logic_vector(7 downto 0) := x"C4";
+		constant CPDriveHighPin: std_logic_vector(7 downto 0) := x"81";
+		constant CPDriveLowPin: std_logic_vector(7 downto 0) := x"82";
+
+	constant	DSADTag	: std_logic_vector(7 downto 0) := x"C5";
+		constant DSADCompInPPin0: std_logic_vector(7 downto 0) := x"01";
+		constant DSADCompInPPin1: std_logic_vector(7 downto 0) := x"02";
+		constant DSADCompInPPin2: std_logic_vector(7 downto 0) := x"03";
+		constant DSADCompInPPin3: std_logic_vector(7 downto 0) := x"04";
+		constant DSADCompInPPin4: std_logic_vector(7 downto 0) := x"05";
+		constant DSADCompInPPin5: std_logic_vector(7 downto 0) := x"06";
+		constant DSADCompInPPin6: std_logic_vector(7 downto 0) := x"07";
+		constant DSADCompInPPin7: std_logic_vector(7 downto 0) := x"08";
+		constant DSADCompInPPin8: std_logic_vector(7 downto 0) := x"09";
+		constant DSADCompInPPin9: std_logic_vector(7 downto 0) := x"0A";
+		constant DSADCompInPPinA: std_logic_vector(7 downto 0) := x"0B";
+		constant DSADCompInPPinB: std_logic_vector(7 downto 0) := x"0C";
+		constant DSADCompInPPinC: std_logic_vector(7 downto 0) := x"0D";
+		constant DSADCompInPPinD: std_logic_vector(7 downto 0) := x"0E";
+		constant DSADCompInPPinE: std_logic_vector(7 downto 0) := x"0F";
+
+		constant DSADCompInNPin0: std_logic_vector(7 downto 0) := x"11";
+		constant DSADCompInNPin1: std_logic_vector(7 downto 0) := x"12";
+		constant DSADCompInNPin2: std_logic_vector(7 downto 0) := x"13";
+		constant DSADCompInNPin3: std_logic_vector(7 downto 0) := x"14";
+		constant DSADCompInNPin4: std_logic_vector(7 downto 0) := x"15";
+		constant DSADCompInNPin5: std_logic_vector(7 downto 0) := x"16";
+		constant DSADCompInNPin6: std_logic_vector(7 downto 0) := x"17";
+		constant DSADCompInNPin7: std_logic_vector(7 downto 0) := x"18";
+		constant DSADCompInNPin8: std_logic_vector(7 downto 0) := x"19";
+		constant DSADCompInNPin9: std_logic_vector(7 downto 0) := x"1A";
+		constant DSADCompInNPinA: std_logic_vector(7 downto 0) := x"1B";
+		constant DSADCompInNPinB: std_logic_vector(7 downto 0) := x"1C";
+		constant DSADCompInNPinC: std_logic_vector(7 downto 0) := x"1D";
+		constant DSADCompInNPinD: std_logic_vector(7 downto 0) := x"1E";
+		constant DSADCompInNPinE: std_logic_vector(7 downto 0) := x"1F";
+
+		constant DSADFBOutPin0: std_logic_vector(7 downto 0) := x"81";
+		constant DSADFBOutPin1: std_logic_vector(7 downto 0) := x"82";
+		constant DSADFBOutPin2: std_logic_vector(7 downto 0) := x"83";
+		constant DSADFBOutPin3: std_logic_vector(7 downto 0) := x"84";
+		constant DSADFBOutPin4: std_logic_vector(7 downto 0) := x"85";
+		constant DSADFBOutPin5: std_logic_vector(7 downto 0) := x"86";
+		constant DSADFBOutPin6: std_logic_vector(7 downto 0) := x"87";
+		constant DSADFBOutPin7: std_logic_vector(7 downto 0) := x"88";
+		constant DSADFBOutPin8: std_logic_vector(7 downto 0) := x"89";
+		constant DSADFBOutPin9: std_logic_vector(7 downto 0) := x"8A";
+		constant DSADFBOutPinA: std_logic_vector(7 downto 0) := x"8B";
+		constant DSADFBOutPinB: std_logic_vector(7 downto 0) := x"8C";
+		constant DSADFBOutPinC: std_logic_vector(7 downto 0) := x"8D";
+		constant DSADFBOutPinD: std_logic_vector(7 downto 0) := x"8E";
+		constant DSADFBOutPinE: std_logic_vector(7 downto 0) := x"8F";
+		
+		constant DSADPWMPin: std_logic_vector(7 downto 0) := x"90";
+	
 	constant LEDTag : std_logic_vector(7 downto 0) := x"80";
 	constant ADCTag : std_logic_vector(7 downto 0) := x"81";
 

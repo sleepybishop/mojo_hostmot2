@@ -319,7 +319,9 @@ begin
 			end if;
 
 			if loadccr = '1' then	
-				quaderror <= ibus(15);
+				if ibus(15) = '1' then
+					quaderror <= '0';
+				end if;	
 				abmaskpol <= ibus(14);
 				-- latchonprobe (bit 13);
 				-- probepol (bit 12);

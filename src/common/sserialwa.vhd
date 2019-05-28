@@ -100,6 +100,7 @@ entity sserialwa is
 		rxserial : in std_logic_vector(Ports -1 downto 0);
 		txserial : out std_logic_vector(Ports -1 downto 0);
 		txenable : out std_logic_vector(Ports -1 downto 0);
+		ntxenable : out std_logic_vector(Ports -1 downto 0);
 		testbit : out std_logic
 		);
 end sserialwa;
@@ -847,6 +848,7 @@ begin
 	looseends: process (drven,txdata,rxserial)
 	begin
 	 	txenable <= drven;
+		ntxenable <= not drven;
 --		txenable(Ports-1) <= hdoorbell;		-- test kludge to check host command --> serial interface jitter
 		txserial <= txdata;
 		rxdata <= rxserial;

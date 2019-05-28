@@ -188,17 +188,42 @@ constant NDRQs: integer := NumberOfModules(TheModuleID,DAQFIFOTag); -- + any oth
 constant BinOscs: integer := NumberOfModules(TheModuleID,BinOscTag);
 constant BinOscWidth: integer := MaxOutputPinsPerModule(ThePinDesc,BinOscTag);
 constant XfrmrOuts: integer := NumberOfModules(TheModuleID,XfrmrOutTag);
-constant XfrmrOutPins: integer := MaxOutputPinsPerModule(ThePinDesc,XfrmrOutTag);
+constant XfrmrOutPins: integer := MaxOutputPinsPerModule(ThePinDesc,XfrmrOutTag);	-- just one allowed now
 constant HM2DPLLs: integer := NumberOfModules(TheModuleID,HM2DPLLTag);
 constant ScalerCounters: integer := NumberOfModules(TheModuleID,ScalerCounterTag);
+constant CPDrives: integer := NumberOfModules(TheModuleID,CPDriveTag);
+constant DSADs: integer := NumberOfModules(TheModuleID,DSADTag);
+constant MaxDSADChannels: integer := CountPinsInRange(ThePinDesc,DSADTag,DSADFBOutPin0,DSADFBOutPinE);
 constant ADCs: integer := NumberOfModules(TheModuleID,ADCTag);
 
+constant InMuxes: integer := NumberOfModules(TheModuleID,InMuxTag);
+type  InMuxWidthType is array(0 to 3) of integer;
+constant InMuxWidth: InMuxWidthType :=( 
+(GetModuleHint(TheModuleID,InMuxWidth0Tag)),
+(GetModuleHint(TheModuleID,InMuxWidth1Tag)),
+(GetModuleHint(TheModuleID,InMuxWidth2Tag)),
+(GetModuleHint(TheModuleID,InMuxWidth3Tag)));
+
+constant InMs: integer := NumberOfModules(TheModuleID,InMTag);
+type  InMWidthType is array(0 to 3) of integer;
+constant InMWidth: InMWidthType :=( 
+(GetModuleHint(TheModuleID,InMWidth0Tag)),
+(GetModuleHint(TheModuleID,InMWidth1Tag)),
+(GetModuleHint(TheModuleID,InMWidth2Tag)),
+(GetModuleHint(TheModuleID,InMWidth3Tag)));
+
+constant DPainters: integer := NumberOfModules(TheModuleID,DPainterTag); 
 -- extract the needed Stepgen table width from the max pin# used with a stepgen tag
 constant StepGenTableWidth: integer := MaxPinsPerModule(ThePinDesc,StepGenTag);
 	-- extract how many BSPI CS pins are needed
 constant BSPICSWidth: integer := CountPinsInRange(ThePinDesc,BSPITag,BSPICS0Pin,BSPICS7Pin);
 	-- extract how many DBSPI CS pins are needed
 constant DBSPICSWidth: integer := CountPinsInRange(ThePinDesc,DBSPITag,DBSPICS0Pin,DBSPICS7Pin);
+-- extract the needed Stepgen table width from the max pin# used with a stepgen tag
+constant InMuxAddrWidth: integer := MaxPinsPerModule(ThePinDesc,InMuxTag);
+--type InMuxWidthHintType is array(0 to InMuxes-1) of integer;
+--shared variable InMuxWidthHint: InMuxWidthHintType;
+
 
 constant UseProbe: boolean := PinExists(ThePinDesc,QCountTag,QCountProbePin);
 constant UseMuxedProbe: boolean := PinExists(ThePinDesc,MuxedQCountTag,MuxedQCountProbePin);
@@ -947,16 +972,6 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal ReadQCounterTimerSelect: std_logic;
 	
 	begin
-		timestampx: entity work.timestamp 
-			port map( 
-				ibus => ibus(15 downto 0),
-				obus => obus(15 downto 0),
-				loadtsdiv => LoadTSDiv ,
-				readts => ReadTS,
-				readtsdiv =>ReadTSDiv,
-				tscount => TimeStampBus,
-				clk => clklow
-			);
 				
 		nodpllqcrate: if HM2DPLLs = 0 generate
 			qcountratex: entity work.qcounterate
@@ -967,6 +982,18 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 					rateout => QcountFilterRate,
 					clk => clklow
 				);	
+				
+				timestampx: entity work.timestamp 
+				port map( 
+					ibus => ibus(15 downto 0),
+					obus => obus(15 downto 0),
+					loadtsdiv => LoadTSDiv ,
+					readts => ReadTS,
+					readtsdiv =>ReadTSDiv,
+					tscount => TimeStampBus,
+					clk => clklow
+				);
+		
 		end generate nodpllqcrate;
 		
 		dpllqcrate: if HM2DPLLs > 0 generate
@@ -984,6 +1011,19 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 					rateout => QcountFilterRate,
 					clk => clklow
 				);				
+			timestampxd: entity work.timestampd 
+				port map( 
+					ibus => ibus(15 downto 0),
+					obus => obus(15 downto 0),
+					loadtsdiv => LoadTSDiv ,
+					readts => ReadTS,
+					readtsdiv =>ReadTSDiv,
+					tscount => TimeStampBus,
+					timer => QCounterDPLLSampleTime,
+					timerenable	=> QcounterTimerEnable,
+					clk => clklow
+				);
+
 		end generate dpllqcrate;		
 		
 		nuseprobe1: if not UseProbe generate
@@ -1187,6 +1227,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal ReadMuxedTS : std_logic;
 	signal MuxedTimeStampBus: std_logic_vector(15 downto 0);
 	signal LoadMuxedQCountRate : std_logic;
+	signal TwoxMuxedQCountFilterRate : std_logic;	
 	signal MuxedQCountFilterRate : std_logic;	
 	signal PrePreMuxedQctrSel : std_logic_vector(1 downto 0);
 	signal PreMuxedQctrSel : std_logic_vector(1 downto 0);
@@ -1202,16 +1243,6 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal ReadMuxedQCtrTimerSelect: std_logic;
 
 	begin
-		timestampx: entity work.timestamp 
-			port map( 
-				ibus => ibus(15 downto 0),
-				obus => obus(15 downto 0),
-				loadtsdiv => LoadMuxedTSDiv,
-				readts => ReadMuxedTS,
-				readtsdiv => ReadMuxedTSDiv,
-				tscount => MuxedTimeStampBus,
-				clk => clklow
-			);				
 
 		nodpllqcratem: if HM2DPLLs = 0 generate
 			qcountratemx: entity work.qcounteratesk
@@ -1219,9 +1250,19 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 				port map( 
 					ibus => ibus,
 					loadRate => LoadMuxedQCountRate,
-					rateout => MuxedQcountFilterRate,
+					rateout => TwoxMuxedQcountFilterRate,
 					clk => clklow
 				);	
+			timestampx: entity work.timestamp 
+				port map( 
+					ibus => ibus(15 downto 0),
+					obus => obus(15 downto 0),
+					loadtsdiv => LoadMuxedTSDiv,
+					readts => ReadMuxedTS,
+					readtsdiv => ReadMuxedTSDiv,
+					tscount => MuxedTimeStampBus,
+					clk => clklow
+				);				
 		end generate nodpllqcratem;
 		
 		dpllqcratem: if HM2DPLLs > 0 generate
@@ -1236,10 +1277,22 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 					timers => RateSources,
 					timer => MuxedQCtrDPLLSampleTime,
 					timerenable	=> MuxedQCtrTimerEnable,
-					rateout => MuxedQcountFilterRate,
+					rateout => TwoxMuxedQcountFilterRate,
 					deskewout => MuxedQCountDeskew,
 					clk => clklow
 				);				
+			timestampxd: entity work.timestampd 
+				port map( 
+					ibus => ibus(15 downto 0),
+					obus => obus(15 downto 0),
+					loadtsdiv => LoadMuxedTSDiv,
+					readts => ReadMuxedTS,
+					readtsdiv => ReadMuxedTSDiv,
+					tscount => MuxedTimeStampBus,
+					timer => MuxedQCtrDPLLSampleTime,
+					timerenable	=> MuxedQCtrTimerEnable,
+					clk => clklow
+				);
 		end generate dpllqcratem;
 		
 		qcountermuxdeskew: entity work.srl16delay
@@ -1322,7 +1375,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 						countclear => LoadMuxedQcounter(i),
 						timestamp => MuxedTimeStampBus,
 						indexmask => MuxedIndexMask(i),
-						probe => Probe,
+						probe => MuxedProbe,
 						filterrate => MuxedQCountFilterRate,
 						clk =>	clklow
 						);
@@ -1347,7 +1400,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 						countclear => LoadMuxedQcounter(i),
 						timestamp => MuxedTimeStampBus,
 						indexmask => MuxedIndexMask(i),
-						probe => Probe,
+						probe => MuxedProbe,
 						timer => MuxedQCtrDPLLSampleTime,
 						timerenable	=> MuxedQCtrTimerEnable,
 						filterrate => MuxedQCountFilterRate,
@@ -1428,7 +1481,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 						countclear => LoadMuxedQcounter(i),
 						timestamp => MuxedTimeStampBus,
 						indexmask => DeMuxedIndexMask(i),
-						probe => Probe,
+						probe => MuxedProbe,
 						filterrate => MuxedQCountFilterRate,
 						clk =>	clklow
 						);
@@ -1453,7 +1506,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 						countclear => LoadMuxedQcounter(i),
 						timestamp => MuxedTimeStampBus,
 						indexmask => DeMuxedIndexMask(i),
-						probe => Probe,
+						probe => MuxedProbe,
 						timer => MuxedQCtrDPLLSampleTime,
 						timerenable	=> MuxedQCtrTimerEnable,
 						filterrate => MuxedQCountFilterRate,
@@ -1547,7 +1600,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 		EncoderDeMux: process(clklow)
 		begin
 			if rising_edge(clklow) then
-				if MuxedQCountFilterRate = '1' then
+				if TwoxMuxedQCountFilterRate = '1' then
 					PrePreMuxedQCtrSel <= PrePreMuxedQCtrSel + 1;
 				end if;
 				PreMuxedQCtrSel <= PrePreMuxedQCtrSel;
@@ -1557,7 +1610,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 					if PreMuxedQCtrSampleTime(0) = '1' and MuxedQCtrSampleTime(0) = '0' then	-- latch the even inputs	
 						DeMuxedQuadA(2*i) <= MuxedQuadA(i);
 						DeMuxedQuadB(2*i) <= MuxedQuadB(i);
-						DeMuxedIndex(2*i) <= MuxedIndex(i);
+						DeMuxedIndex(2*i) <= MuxedIndex(i);		
 					end if;
 					if PreMuxedQCtrSampleTime(0) = '0' and MuxedQCtrSampleTime(0) = '1' then	-- latch the odd inputs
 						DeMuxedQuadA(2*i+1) <= MuxedQuadA(i);
@@ -1565,6 +1618,11 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 						DeMuxedIndex(2*i+1) <= MuxedIndex(i);
 					end if;
 				end loop;
+				if PreMuxedQCtrSampleTime(0) = '0' and MuxedQCtrSampleTime(0) = '1' then	-- latch the odd inputs
+					MuxedQCountFilterRate <='1';	
+				else
+					MuxedQCountFilterRate <='0';
+				end if;
 			end if; -- clk
 		end process;		
 
@@ -1687,7 +1745,25 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 					end case;
 				end if;
 			end loop;
-		end process;						
+		end process;	
+	
+		DoLocalPWMPins: process(PWMGenOutA,PWMGenOutB,PWMGenOutC)
+		begin	
+			for i in 0 to LIOWidth -1 loop				-- loop through all the external I/O pins 
+				if ThePinDesc(i+IOWidth)(15 downto 8) = PWMTag then											
+					case (ThePinDesc(i+IOWidth)(7 downto 0)) is	--secondary pin function
+						when PWMAOutPin =>
+							LIOBits(i) <= PWMGENOutA(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))); 
+						when PWMBDirPin =>
+							LIOBits(i) <= PWMGENOutB(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))); 
+						when PWMCEnaPin =>
+							LIOBits(i) <= PWMGENOutC(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))); 
+						when others => null;
+					end case;
+				end if;
+			end loop;
+		end process;	
+		
 	end generate makepwms;
 
 	
@@ -2105,6 +2181,8 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 		begin
 		makesssis: for i in 0 to SSSIs -1 generate
 			sssi: entity work.SimpleSSI
+			generic map (
+				Clock => ClockLow	)
 			port  map ( 
 				clk => clklow,
 				ibus => ibus,
@@ -2954,6 +3032,437 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 		end process;		
 	end generate;
 
+	makecpdrivemod:  if CPDrives >0  generate	
+	signal LoadCPDriveEna: std_logic_vector(CPDrives -1 downto 0);	
+	signal CPDriveHigh: std_logic_vector(CPDrives -1 downto 0);	
+	signal CPDriveLow: std_logic_vector(CPDrives -1 downto 0);		
+	signal LoadCPDriveEnaSel: std_logic;	
+
+	begin
+		makecpdrives: for i in 0 to CPDrives -1 generate
+			acpdrive: entity work.cpdrive
+			generic map (
+				clock => ClockLow
+				)
+			port map ( 
+				clk => clklow,
+				ibus => ibus(0),
+				loadena => LoadCPDriveEna(i),
+				high => CPDriveHigh(i),
+				low  => CPDriveLow(i)	
+				);
+		end generate;
+		
+		CPDriveDecodeProcess : process (A,writestb,LoadCPDriveEnaSel)
+		begin		
+			if A(15 downto 8) = CPDriveEnaAddr then	 	--  Charge Pump Power Supply enable decode
+				LoadCPDriveEnaSel <= '1';
+			else
+				LoadCPDriveEnaSel <= '0';
+			end if;
+			LoadCPDriveEna <= OneOfNDecode(CPDrives,LoadCPDriveEnaSel,writestb,A(5 downto 2)); -- 16 max
+		end process CPDriveDecodeProcess;
+
+		DoCPDrivePins: process(CPDriveHigh,CPDriveLow)
+		begin	
+			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins 
+				if ThePinDesc(i)(15 downto 8) = CPDriveTag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...											
+					case (ThePinDesc(i)(7 downto 0)) is	--secondary pin function
+						when CPDriveHighPin =>
+							AltData(i) <= CPDriveHigh(conv_integer(ThePinDesc(i)(23 downto 16)));
+							report("External CPDriveHighPin found");							
+						when CPDriveLowPin =>
+							AltData(i) <=  CPDriveLow(conv_integer(ThePinDesc(i)(23 downto 16))); -- ExtIO is active low enable
+							report("External CPDriveLowPin found");							
+						when others => null;								
+					end case;
+				end if;
+			end loop;	
+		end process;
+
+		DoLocalCPDrivePins: process(CPDriveHigh,CPDriveLow) 
+		begin
+			for i in 0 to LIOWidth -1 loop				-- loop through all the local I/O pins 
+				if ThePinDesc(i+IOWidth)(15 downto 8) = CPDriveTag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...											
+					case (ThePinDesc(i+IOWidth)(7 downto 0)) is	--secondary pin function
+						when CPDriveHighPin =>
+							LIOBits(i) <= CPDriveHigh(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)));
+							report("Local CPDriveHighPin found");							
+						when CPDriveLowPin =>
+							LIOBits(i) <= CPDriveLow(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))); 
+							report("Local CPDriveLowPin found");							
+						when others => null;								
+					end case;
+				end if;
+			end loop;		
+		end process;		
+	end generate;
+	
+	makeinmuxmod: if InMuxes >0 generate
+	signal LoadInMuxControl: std_logic_vector(InMuxes -1 downto 0);
+	signal ReadInMuxControl: std_logic_vector(InMuxes -1 downto 0);
+	signal LoadInMuxFilter: std_logic_vector(InMuxes -1 downto 0);
+	signal ReadInMuxFilter: std_logic_vector(InMuxes -1 downto 0);
+	signal ReadInMuxFilteredData: std_logic_vector(InMuxes -1 downto 0);
+	signal ReadInMuxRawData: std_logic_vector(InMuxes -1 downto 0);
+	signal ReadInMuxMPGCount: std_logic_vector(InMuxes -1 downto 0);
+	signal LoadInMuxMPGCount: std_logic_vector(InMuxes -1 downto 0);
+	signal InMuxData: std_logic_vector(InMuxes -1 downto 0);
+	type InMuxAddrType is array(InMuxes-1 downto 0) of std_logic_vector(4 downto 0);
+	signal InMuxAddr: InMuxAddrType;
+-- InMux related signals
+
+	signal ImMuxControlSel: std_logic;
+	signal InMuxFilterSel: std_logic;
+	signal InMuxFilteredDataSel: std_logic;
+	signal InMuxRawDataSel: std_logic;
+	signal InMuxMPGCountSel: std_logic;
+
+	begin
+		generateinmuxes: for i in 0 to InMuxes-1 generate
+			inmuxxm: entity work.inmuxm
+			generic map (
+				buswidth => BusWidth,
+				muxwidth => InMuxWidth(i)
+				)
+			port map (
+			clk => clklow,
+			ibus => ibus,
+			obus => obus,
+			loadcontrol => LoadInMuxControl(i), 
+			readcontrol => ReadInMuxControl(i),
+			loadfilter => LoadInMuxFilter(i),
+			readfilter => ReadInMuxFilter(i),
+			readfiltereddata => ReadInMuxFilteredData(i),
+			readrawdata => ReadInMuxRawData(i),
+			readmpg => ReadInMuxMPGCount(i),
+			loadmpg => LoadInMuxMPGCount(i),
+			muxadd => InMuxAddr(i),
+			muxdata => InMuxData(i)
+				);
+			end generate;
+		
+
+		InMuxDecodeProcess : process (A,readstb,writestb,ImMuxControlSel,InMuxFilterSel,
+		                              InMuxFilteredDataSel,InMuxRawDataSel,InMuxMPGCountSel)
+		begin
+			if A(15 downto 8) = InMuxControlAddr then	 --  control register
+				ImMuxControlSel <= '1';
+			else
+				ImMuxControlSel <= '0';
+			end if;
+			if A(15 downto 8) = InMuxFilterAddr then	 --  filter (slow/fast) register 
+				InMuxFilterSel <= '1';
+			else
+				InMuxFilterSel <= '0';
+			end if;
+			if A(15 downto 8) = InMuxFilteredDataAddr then	 -- filtered data register 
+				InMuxFilteredDataSel <= '1';
+			else
+				InMuxFilteredDataSel <= '0';
+			end if;
+			if A(15 downto 8) = InMuxRawDataAddr then	 --  raw data register
+				InMuxRawDataSel <= '1';
+			else
+				InMuxRawDataSel <= '0';
+			end if;
+			if A(15 downto 8) = InMuxMPGAddr then	 --  MPG counter registers
+				InMuxMPGCountSel <= '1';
+			else
+				InMuxMPGCountSel <= '0';
+			end if;
+	
+			
+			LoadInMuxControl <= OneOfNDecode(InMuxes,ImMuxControlSel,writestb,A(7 downto 2)); 	-- 64 max
+			ReadInMuxControl <= OneOfNDecode(InMuxes,ImMuxControlSel,readstb,A(7 downto 2)); 		-- Note: all the reads are decoded here
+			LoadInMuxFilter <= OneOfNDecode(InMuxes,InMuxFilterSel,writestb,A(7 downto 2));	-- but most are commented out in the 
+			ReadInMuxFilter <= OneOfNDecode(InMuxes,InMuxFilterSel,readstb,A(7 downto 2));	-- InMuxes module hardware for space reasons
+			ReadInMuxFilteredData <= OneOfNDecode(InMuxes,InMuxFilteredDataSel,readstb,A(7 downto 2));			 
+			ReadInMuxRawData <= OneOfNDecode(InMuxes,InMuxRawDataSel,Readstb,A(7 downto 2));	
+			ReadInMuxMPGCount <= OneOfNDecode(InMuxes,InMuxMPGCountSel,Readstb,A(7 downto 2));	
+			LoadInMuxMPGCount <= OneOfNDecode(InMuxes,InMuxMPGCountSel,Writestb,A(7 downto 2));	
+		end process InMuxDecodeProcess;
+		
+		DoInMuxPins: process(IOBits,InMuxAddr,InMuxData)
+		begin	
+			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins 
+				if ThePinDesc(i)(15 downto 8) = InMuxTag then											
+					if (ThePinDesc(i)(7 downto 0) and x"80") /= 0 then -- only for outputs 
+						AltData(i) <= InMuxAddr(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(6 downto 0))-1);						
+					end if;
+					if (ThePinDesc(i)(7 downto 0)) = InMuxDataPin then	--secondary pin function
+						InMuxData(conv_integer(ThePinDesc(i)(23 downto 16))) <= IOBits(i);
+					end if;
+				end if;
+			end loop;
+		end process;
+		
+	end generate makeinmuxmod;
+
+	makeinmmod: if InMs >0 generate
+	signal LoadInMControl: std_logic_vector(InMs -1 downto 0);
+	signal ReadInMControl: std_logic_vector(InMs -1 downto 0);
+	signal LoadInMFilter: std_logic_vector(InMs -1 downto 0);
+	signal ReadInMFilter: std_logic_vector(InMs -1 downto 0);
+	signal ReadInMFilteredData: std_logic_vector(InMs -1 downto 0);
+	signal ReadInMRawData: std_logic_vector(InMs -1 downto 0);
+	signal ReadInMMPGCount: std_logic_vector(InMs -1 downto 0);
+	signal LoadInMMPGCount: std_logic_vector(InMs -1 downto 0);
+	type InMDataType is array(InMs-1 downto 0) of std_logic_vector(31 downto 0);
+	signal InMData: InMDataType;
+-- InM related signals
+
+	signal ImMControlSel: std_logic;
+	signal InMFilterSel: std_logic;
+	signal InMFilteredDataSel: std_logic;
+	signal InMRawDataSel: std_logic;
+	signal InMMPGCountSel: std_logic;
+
+	begin
+		generateinms: for i in 0 to InMs-1 generate
+			inmx: entity work.inm
+			generic map (
+				buswidth => BusWidth,
+				inwidth => InMWidth(i)
+				)
+			port map (
+			clk => clklow,
+			ibus => ibus,
+			obus => obus,
+			loadcontrol => LoadInMControl(i), 
+			readcontrol => ReadInMControl(i),
+			loadfilter => LoadInMFilter(i),
+			readfilter => ReadInMFilter(i),
+			readfiltereddata => ReadInMFilteredData(i),
+			readrawdata => ReadInMRawData(i),
+			readmpg => ReadInMMPGCount(i),
+			loadmpg => LoadInMMPGCount(i),
+			indata => InMData(i)
+				);
+			end generate;
+		
+
+		InMDecodeProcess : process (A,readstb,writestb,ImMControlSel,InMFilterSel,
+		                              InMFilteredDataSel,InMRawDataSel,InMMPGCountSel)
+		begin
+			if A(15 downto 8) = InMControlAddr then	 --  control register
+				ImMControlSel <= '1';
+			else
+				ImMControlSel <= '0';
+			end if;
+			if A(15 downto 8) = InMFilterAddr then	 --  filter (slow/fast) register 
+				InMFilterSel <= '1';
+			else
+				InMFilterSel <= '0';
+			end if;
+			if A(15 downto 8) = InMFilteredDataAddr then	 -- filtered data register 
+				InMFilteredDataSel <= '1';
+			else
+				InMFilteredDataSel <= '0';
+			end if;
+			if A(15 downto 8) = InMRawDataAddr then	 --  raw data register
+				InMRawDataSel <= '1';
+			else
+				InMRawDataSel <= '0';
+			end if;
+			if A(15 downto 8) = InMMPGAddr then	 --  MPG counter registers
+				InMMPGCountSel <= '1';
+			else
+				InMMPGCountSel <= '0';
+			end if;
+	
+			
+			LoadInMControl <= OneOfNDecode(InMs,ImMControlSel,writestb,A(7 downto 2)); 	-- 64 max
+			ReadInMControl <= OneOfNDecode(InMs,ImMControlSel,readstb,A(7 downto 2)); 		-- Note: all the reads are decoded here
+			LoadInMFilter <= OneOfNDecode(InMs,InMFilterSel,writestb,A(7 downto 2));	-- but most are commented out in the 
+			ReadInMFilter <= OneOfNDecode(InMs,InMFilterSel,readstb,A(7 downto 2));	-- InMes module hardware for space reasons
+			ReadInMFilteredData <= OneOfNDecode(InMs,InMFilteredDataSel,readstb,A(7 downto 2));			 
+			ReadInMRawData <= OneOfNDecode(InMs,InMRawDataSel,Readstb,A(7 downto 2));	
+			ReadInMMPGCount <= OneOfNDecode(InMs,InMMPGCountSel,Readstb,A(7 downto 2));	
+			LoadInMMPGCount <= OneOfNDecode(InMs,InMMPGCountSel,writestb,A(7 downto 2));	
+		end process InMDecodeProcess;
+		
+		DoInMPins: process(IOBits,InMData)
+		begin	
+			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins 
+				if ThePinDesc(i)(15 downto 8) = InMTag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...											
+					if (ThePinDesc(i)(7 downto 0) and x"C0") = x"00" then 	-- ins match 0X .. 3X
+						InMData(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(5 downto 0))-1) <= IOBits(i);			
+					end if;
+				end if;
+			end loop;
+		end process;
+		
+	end generate makeinMmod;
+
+	makedpainters: if DPainters >0 generate
+	signal LoadDPainterRate: std_logic_vector(DPainters -1 downto 0);
+	signal ReadDPainterRate: std_logic_vector(DPainters -1 downto 0);
+	signal LoadDPainterAccum: std_logic_vector(DPainters -1 downto 0);
+	signal ReadDPainterAccum: std_logic_vector(DPainters -1 downto 0);
+	signal LoadDPainterMode0: std_logic_vector(DPainters -1 downto 0);
+	signal ReadDPainterMode0: std_logic_vector(DPainters -1 downto 0);
+	signal LoadDPainterMode1: std_logic_vector(DPainters -1 downto 0);
+	signal ReadDPainterMode1: std_logic_vector(DPainters -1 downto 0);
+	signal LoadDPainterStartComp: std_logic_vector(DPainters -1 downto 0);
+	signal ReadDPainterStartComp: std_logic_vector(DPainters -1 downto 0);
+	signal LoadDPainterStopComp: std_logic_vector(DPainters -1 downto 0);
+	signal ReadDPainterStopComp: std_logic_vector(DPainters -1 downto 0);
+	signal LoadDPainterData: std_logic_vector(DPainters -1 downto 0);
+
+	signal DPainterData: std_logic_vector(DPainters-1 downto 0);	
+	signal DPainterClk: std_logic_vector(DPainters-1 downto 0);
+-- Data Painter related signals
+
+	signal DPainterRateSel: std_logic;
+	signal DPainterAccumSel: std_logic;
+	signal DPainterMode0Sel: std_logic;
+	signal DPainterMode1Sel: std_logic;
+	signal DPainterStartCompSel: std_logic;
+	signal DPainterStopCompSel: std_logic;
+	signal DPainterDataSel: std_logic;
+
+	begin	
+		makedpainters: if HM2DPLLs = 0 generate
+			generatedpainters: for i in 0 to dpainters-1 generate
+				dpainterx: entity work.dpainterd
+				generic map (
+					buswidth => BusWidth,
+					asize => 48,	
+					rsize => 32,
+					usedpll => false						
+					)
+				port map (
+			  clk => clklow,
+	 		  ibus =>  ibus,
+           obus =>  obus,
+           loadrate =>  LoadDPainterRate(i),
+			  loadaccum =>  LoadDPainterAccum(i),
+			  loadmode0 =>  LoadDPainterMode0(i),
+			  loadmode1 =>  LoadDPainterMode1(i),
+			  loadstartcomp =>  LoadDPainterStartComp(i),
+			  loadstopcomp => LoadDPainterStopComp(i), 
+			  push =>  LoadDPainterData(i),
+           readrate => ReadDPainterRate(i),
+			  readaccum =>  ReadDPainterAccum(i),
+			  readmode0 =>  ReadDPainterMode0(i),
+			  readmode1 =>  ReadDPainterMode1(i),
+			  readstartcomp =>  ReadDPainterStartComp(i),
+			  readstopcomp => ReadDPainterStopComp(i), 
+			  timers =>  "00000",
+           videodataout => DPainterData(i), 
+			  videoclkout =>  DPainterClk(i)			
+			  );
+			end generate;
+		end generate;
+		
+		makedpainterds: if HM2DPLLs > 0 generate
+			generatedpainterds: for i in 0 to dpainters-1 generate
+				dpainterdx: entity work.dpainterd
+				generic map (
+					buswidth => BusWidth,
+					asize => 48,
+					rsize => 32,
+					usedpll => true	
+					)
+				port map (
+			  clk => clklow,
+	 		  ibus =>  ibus,
+           obus =>  obus,
+           loadrate =>  LoadDPainterRate(i),
+			  loadaccum =>  LoadDPainterAccum(i),
+			  loadmode0 =>  LoadDPainterMode0(i),
+			  loadmode1 =>  LoadDPainterMode1(i),
+			  loadstartcomp =>  LoadDPainterStartComp(i),
+			  loadstopcomp => LoadDPainterStopComp(i), 
+			  push =>  LoadDPainterData(i),
+           readrate => ReadDPainterRate(i),
+			  readaccum =>  ReadDPainterAccum(i),
+			  readmode0 =>  ReadDPainterMode0(i),
+			  readmode1 =>  ReadDPainterMode1(i),
+			  readstartcomp =>  ReadDPainterStartComp(i),
+			  readstopcomp => ReadDPainterStopComp(i), 
+			  timers =>  RateSources,
+           videodataout => DPainterData(i), 
+			  videoclkout =>  DPainterClk(i)			
+			  );
+			end generate;
+		end generate;
+				
+		DPainterDecodeProcess : process (A,readstb,writestb,DPainterRateSel,DPainterAccumSel,DPainterMode0Sel,
+		                                 DPainterMode1Sel,DPainterStartCompSel,DPainterStopCompSel,DPainterDataSel)
+		begin
+			if A(15 downto 8) = DPainterRateAddr then	 --  DPainter rate register select
+				DPainterRateSel <= '1';
+			else
+				DPainterRateSel <= '0';
+			end if;
+			if A(15 downto 8) = DPainterAccumAddr then	 --  DPainter Accumumlator low select
+				DPainterAccumSel <= '1';
+			else
+				DPainterAccumSel <= '0';
+			end if;
+			if A(15 downto 8) = DPainterMode0Addr then	 --  DPainter mode register select
+				DPainterMode0Sel <= '1';
+			else
+				DPainterMode0Sel <= '0';
+			end if;
+			if A(15 downto 8) = DPainterMode1Addr then	 --  DPainter mode register select
+				DPainterMode1Sel <= '1';
+			else
+				DPainterMode1Sel <= '0';
+			end if;
+			if A(15 downto 8) = DPainterStartCompAddr then	 --  DPainter Dir setup time register select
+				DPainterStartCompSel <= '1';
+			else
+				DPainterStartCompSel <= '0';
+			end if;
+			if A(15 downto 8) =DPainterStopCompAddr then	 --  DPainter Dir hold time register select
+				DPainterStopCompSel <= '1';
+			else
+				DPainterStopCompSel <= '0';
+			end if;
+			if A(15 downto 8) = DPainterDataAddr then	 --  DPainter pulse width register select
+				DPainterDataSel <= '1';
+			else
+				DPainterDataSel <= '0';
+			end if;
+			
+			LoadDPainterRate <= OneOfNDecode(DPainters,DPainterRateSel,writestb,A(7 downto 2)); 	-- 64 max
+			ReadDPainterRate <= OneOfNDecode(DPainters,DPainterRateSel,readstb,A(7 downto 2)); 		-- Note: all the reads are decoded here
+			LoadDPainterAccum <= OneOfNDecode(DPainters,DPainterAccumSel,writestb,A(7 downto 2));	-- but most are commented out in the 
+			ReadDPainterAccum <= OneOfNDecode(DPainters,DPainterAccumSel,readstb,A(7 downto 2));	-- DPainter module hardware for space reasons
+			LoadDPainterMode0 <= OneOfNDecode(DPainters,DPainterMode0Sel,writestb,A(7 downto 2));			 
+			ReadDPainterMode0 <= OneOfNDecode(DPainters,DPainterMode0Sel,Readstb,A(7 downto 2));	
+			LoadDPainterMode1 <= OneOfNDecode(DPainters,DPainterMode1Sel,writestb,A(7 downto 2));			 
+			ReadDPainterMode1 <= OneOfNDecode(DPainters,DPainterMode1Sel,Readstb,A(7 downto 2));	
+			LoadDPainterStartComp <= OneOfNDecode(DPainters,DPainterStartCompSel,writestb,A(7 downto 2));
+			ReadDPainterStartComp <= OneOfNDecode(DPainters,DPainterStartCompSel,Readstb,A(7 downto 2));
+			LoadDPainterStopComp <= OneOfNDecode(DPainters,DPainterStopCompSel,writestb,A(7 downto 2));
+			ReadDPainterStopComp <= OneOfNDecode(DPainters,DPainterStopCompSel,Readstb,A(7 downto 2));
+			LoadDPainterData <= OneOfNDecode(DPainters,DPainterDataSel,writestb,A(7 downto 2));
+		end process DPainterDecodeProcess;
+		
+		DoDPainterPins: process(IOBits,DPainterData,DPainterClk)
+		begin	
+			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins 
+				if ThePinDesc(i)(15 downto 8) = DPainterTag then											
+					case (ThePinDesc(i)(7 downto 0)) is	--secondary pin function
+						when DPainterDataPin =>
+							AltData(i) <= DPainterData(conv_integer(ThePinDesc(i)(23 downto 16)));
+							report("Dpainter Data found");							
+						when DPainterClkPin =>
+							AltData(i) <=  DPainterClk(conv_integer(ThePinDesc(i)(23 downto 16))); -- ExtIO is active low enable
+							report("DPainter Clock found");							
+						when others => null;								
+					end case;
+				end if;
+			end loop;
+		end process;
+		
+	end generate makedpainters;
+
+
 	makexfrmrmod:  if XfrmrOuts >0  generate	
 	signal LoadXfrmrData: std_logic_vector(XfrmrOuts -1 downto 0);	
 	signal ReadXfrmrData: std_logic_vector(XfrmrOuts -1 downto 0);	
@@ -2969,7 +3478,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			aXfrmrOut: entity work.xfrmrout
 			generic map (
 				clock=> ClockLow,
-				pins => XfrmrOutPins
+				pins => XfrmrOutPins				-- temp kludge, only one xfrmrout possible
 				)
 			port map ( 
 				ibus => ibus,
@@ -2984,7 +3493,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 				);
 		end generate;
 		
-		XfrmrDecodeProcess : process (A,writestb,readstb,XfrmrRateSel)
+		XfrmrDecodeProcess : process (A,writestb,readstb,XfrmrRateSel,XfrmrDataSel)
 		begin		
 			if A(15 downto 8) = XfrmrDataAddr then	 	--  transformer out data
 				XfrmrDataSel <= '1';
@@ -3002,13 +3511,16 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			ReadXfrmrRate <= OneOfNDecode(XfrmrOuts,XfrmrRateSel,readstb,A(5 downto 2)); -- 16 max
 		end process XfrmrDecodeProcess;
 
-		DoXfrmrPins: process(XfrmrOut)
+		DoXfrmrPins: process(XfrmrOut,XfrmrRef)
 		begin	
 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins 
 				if ThePinDesc(i)(15 downto 8) = XfrmrOutTag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...											
 					if (ThePinDesc(i)(7 downto 0) and x"C0") = x"80" then 	-- outs match 8X .. BX 
-						AltData(i) <=   XfrmrOut(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(5 downto 0))-1);	--  max ports, more than 8 requires adding to IDROM pins					
+						AltData(i) <=  XfrmrOut(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(5 downto 0))-1);	--  max ports, more than 8 requires adding to IDROM pins					
 					end if;
+					if ThePinDesc(i)(7 downto 0) = XfrmrRefPin then		-- bug fix 10/25/18
+						AltData(i) <=  XfrmrRef;
+					end if;	
 				end if;
 			end loop;	
 		end process;
@@ -3259,6 +3771,8 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal SSerialTX: SSerialTXType;
 	type  SSerialTXEnType is array(SSerials-1 downto 0) of std_logic_vector(MaxUARTsPerSSerial-1 downto 0);
 	signal SSerialTXEn: SSerialTXEnType;
+	type  SSerialNTXEnType is array(SSerials-1 downto 0) of std_logic_vector(MaxUARTsPerSSerial-1 downto 0);
+	signal SSerialNTXEn: SSerialNTXEnType;
 	signal SSerialTestBits: std_logic_vector(SSerials -1 downto 0);	
 	signal SSerialCommandSel: std_logic;
 	signal SSerialDataSel: std_logic;          
@@ -3296,6 +3810,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 				rxserial  =>  SSerialRX(i)(UARTSPerSSerial(i) -1 downto 0),
 				txserial  =>  SSerialTX(i)(UARTSPerSSerial(i) -1 downto 0),
 				txenable  =>  SSerialTXEn(i)(UARTSPerSSerial(i) -1 downto 0),
+				ntxenable  =>  SSerialNTXEn(i)(UARTSPerSSerial(i) -1 downto 0),
 				testbit  =>   SSerialTestBits(i)
 				);
 		end generate;
@@ -3354,7 +3869,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 
 		end process SSerialDecodeProcess;
 
-		DoSSerialPins: process(SSerialTX, SSerialTXEn, SSerialTestBits, IOBits)
+		DoSSerialPins: process(SSerialTX, SSerialTXEn, SSerialNTXEn, SSerialTestBits, IOBits)
 		begin	
 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins 
 				if ThePinDesc(i)(15 downto 8) = SSerialTag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...											
@@ -3363,6 +3878,9 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 					end if;
 					if (ThePinDesc(i)(7 downto 0) and x"F0") = x"90" then 	-- txens match 9X
 						AltData(i) <= not SSerialTXEn(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(3 downto 0))-1); 	-- 16 max ports						
+					end if;
+					if (ThePinDesc(i)(7 downto 0) and x"F0") = x"A0" then 	-- ntxens match AX
+						AltData(i) <= not SSerialNTXEn(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(3 downto 0))-1); 	-- 16 max ports						
 					end if;
 					if (ThePinDesc(i)(7 downto 0) and x"F0") = x"00" then 	-- rxins match 0X
 						SSerialRX(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(3 downto 0))-1) <= IOBits(i);		-- 16 max ports			
@@ -3529,6 +4047,90 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			ReadScalerCount <= OneOfNDecode(ScalerCounters,ScalerCountSel,readstb,A(7 downto 2)); 
 			ReadScalerLatch <= OneOfNDecode(ScalerCounters,ScalerLatchSel,readstb,A(7 downto 2)); 
 		end process ScalerDecodeProcess;
+		
+	end generate;	
+
+	makedsads: if DSADs >0 generate -- note	
+	
+	type DSADCompInPType is array(DSADs-1 downto 0) of std_logic_vector(MaxDSADChannels-1 downto 0);
+	type DSADCompInNType is array(DSADs-1 downto 0) of std_logic_vector(MaxDSADChannels-1 downto 0);
+	type DSADFBOutType is array(DSADs-1 downto 0) of std_logic_vector(MaxDSADChannels-1 downto 0);
+	signal DSADSel: std_logic;
+	signal ReadDSADData: std_logic_vector(DSADs-1 downto 0);
+	signal LoadDSADCont: std_logic_vector(DSADs-1 downto 0);
+	signal DSADPWM: std_logic_vector(DSADs-1 downto 0);
+	signal DSADCompInP: DSADCompInPType;
+	signal DSADCompInN: DSADCompInNType;
+	signal DSADFBOut: DSADFBOutType;
+
+	begin
+
+		makedsads: for i in 0 to DSADs-1 generate
+			dsadx: entity work.simpledsad 
+				generic map (
+					channels => MaxDSADChannels,
+					buswidth => BusWidth
+				)		
+				port map (
+					clk  => clklow,
+					ibus => ibus,
+					obus => obus,
+					a => A(5 downto 2),
+					readdata => ReadDSADData(i),
+					loadcontrol => LoadDSADCont(i),
+					compin_p => DSADCompInP(i),
+					compin_n => DSADCompInN(i),
+					fbout => DSADFBOut(i),
+					pwmout => DSADPWM(i)
+				);
+		end generate;
+			
+		DoLocalDSADPins: process(LIOBits,DSADCompInP,DSADCompInN,DSADFBOut,DSADPWM) -- only for 7IA0 LIO currently
+		begin
+			for i in 0 to LIOWidth -1 loop				-- loop through all the local I/O pins 
+				report("Doing DSAD LIOLoop: "& integer'image(i));
+				if ThePinDesc(i+IOWidth)(15 downto 8) = DSADTag then 	-- GTag (Local I/O starts at end of external I/O)				
+					if (ThePinDesc(i+IOWidth)(7 downto 0) and x"F0") = x"00" then 	-- CompInPs match 0X .. 
+						report("Local DSADCompIn P Pin found at LIOBit " & integer'image(i));
+						report("Module: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))));
+						report("Channel: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(3 downto 0))-1));
+						report("PinTag: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(7 downto 0))));
+						DSADCompInP(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)))(conv_integer(ThePinDesc(i+IOWidth)(3 downto 0))-1) <= LIOBits(i);		-- 16 max ports			
+					end if;
+					if (ThePinDesc(i+IOWidth)(7 downto 0) and x"F0") = x"10" then 	-- CompInNs match 1X .. 
+						report("Local DSADCompIn N Pin found at LIOBit " & integer'image(i));
+						report("Module: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))));
+						report("Channel: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(3 downto 0))-1));
+						report("PinTag: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(7 downto 0))));
+						DSADCompInN(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)))(conv_integer(ThePinDesc(i+IOWidth)(3 downto 0))-1) <= LIOBits(i);		-- 16 max ports			
+					end if;
+					if (ThePinDesc(i+IOWidth)(7 downto 0) and x"F0") = x"80" then 	-- FBOuts match 8X .. 
+						report("Local DSADFBOut Pin found at LIOBit " & integer'image(i));
+						report("Module: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))));
+						report("Channel: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(3 downto 0))-1));
+						report("PinTag: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(7 downto 0))));
+						LIOBits(i) <= DSADFBOut(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)))(conv_integer(ThePinDesc(i+IOWidth)(3 downto 0))-1);						
+					end if;			
+					if (ThePinDesc(i+IOWidth)(7 downto 0)) = DSADPWMPin then
+						LIOBits(i) <= DSADPWM(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))); 
+						report("Local DSADPWM Pin found at LIOBit " & integer'image(i));
+						report("Module: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))));
+						report("PinTag: " & integer'image(conv_integer(ThePinDesc(i+IOWidth)(7 downto 0))));
+					end if;		
+				end if;	
+			end loop;		
+		end process;	
+	
+		DSADDecodeProcess : process (A,Readstb,writestb,DSADSel)
+		begin		
+			if A(15 downto 8) = DSADAddr then	 --  
+				DSADSel <= '1';
+			else
+				DSADSel <= '0';
+			end if;		
+			ReadDSADData <= OneOfNDecode(DSADs,DSADSel,readstb,A(7 downto 6)); -- 4 max 
+			LoadDSADCont <= OneOfNDecode(DSADs,DSADSel,writestb,A(7 downto 6)); 
+		end process DSADDecodeProcess;
 		
 	end generate;	
 

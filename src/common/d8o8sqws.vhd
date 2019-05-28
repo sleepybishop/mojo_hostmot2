@@ -101,7 +101,7 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 -- No unconditional jumps in jump shadow (2 inst after conditional jump)
 -- Address hazards:
 --	Fetches via index register require 3 instructions from ST(X,Y,Z,T) or ADDI(X,Y,Z,T)
---	to actual fetch (STA via index takes no extra delay) 
+--	to actual fetch (STA via index takes 2 instruction delay) 
 -- addix,y,z,t must have inst between successive adds that is addix,1 addix,7 wont work
 -- this may be a pipeline bug, FIXME
 

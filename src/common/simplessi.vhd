@@ -2,6 +2,9 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use ieee.math_real.all;
+use ieee.numeric_std.all;
+
 --
 -- Copyright (C) 2009, Peter C. Wallace, Mesa Electronics
 -- http://www.mesanet.com
@@ -66,8 +69,12 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 -- 
-
+-- added 200 ns digital filter to SSI data 7/6/18 
+-- should skew clock to compensate, next time...
 entity SimpleSSI is
+	generic (
+			Clock : integer
+			);    
     Port ( clk : in std_logic;
 	 		  ibus : in std_logic_vector(31 downto 0);
            obus : out std_logic_vector(31 downto 0);
@@ -111,6 +118,12 @@ signal TStart: std_logic;
 signal MaskFirst: std_logic; 
 signal SampleTime: std_logic; 
 signal DAV: std_logic;
+
+constant defaultfilter : real := round((real(Clock)/5000000.0)); --default filter TC is 200 ns
+signal FilterReg: std_logic_vector(7 downto 0) := std_logic_vector(to_unsigned(integer(defaultfilter),8)); 
+signal FilterCount: std_logic_vector(7 downto 0);
+signal SSIDataD: std_logic;
+signal FiltSSIData: std_logic;
  
 begin
 
@@ -120,7 +133,21 @@ begin
 									BitRateDDSAccum,DAv,BitRateDDSReg)
 	begin
 		if clk'event and clk = '1' then
-
+			SSIDataD <= ssidata;
+	
+			if (SSIDataD = '1') and (FilterCount < FilterReg) then		-- simple digital filter on rxdata
+				FilterCount <= FilterCount + 1;
+			end if;
+			if (SSIDataD = '0') and (FilterCount /= 0) then 
+				FilterCount <= FilterCount -1;
+			end if;
+			if FilterCount >= FilterReg then
+				FiltSSIData<= '1';
+			end if;
+			if FilterCount = 0 then
+				FiltSSIData<= '0';
+			end if;
+	
 			if Start = '1' then 
 				BitCount <= BitCountReg;
 				Go <= '1';
@@ -137,7 +164,7 @@ begin
 			
 			if SampleTime = '1' then
 				if MaskFirst = '1' then 
-					SSISreg <= SSISreg(62 downto 0) & ssidata;
+					SSISreg <= SSISreg(62 downto 0) & FiltSSIData;
 				end if;
 				if BitCount /= "0000000" then
 					BitCount <= BitCount -1;

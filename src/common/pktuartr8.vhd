@@ -286,7 +286,8 @@ begin
 	                        OldDDSMSB,FrameDelayCount,poprc,RCPopData,popdata,busy,
 									OutData,ErrPopData,readbitratel,readbitrateh,readbitratem,
 									BitRateDDSReg,readmodel,readmodem,readmodeh,ModeReg,FrameBufferEmpty,
-									RCFIFOError,rxmask,Go,FDGo,ibus,RCFIFOEmpty,RFrameCount)
+									RCFIFOError,rxmask,Go,FDGo,ibus,RCFIFOEmpty,RFrameCount,
+									readfilter,filterreg)
 	begin
 		report "Default FilterReg = " & integer'image(integer(defaultfilter));
 		if rising_edge(clk) then
