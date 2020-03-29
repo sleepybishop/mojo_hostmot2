@@ -77,7 +77,7 @@ package PIN_MOJO_DUEX5_72 is
 	(StepGenTag,            x"02",  ClockLowTag,        x"05",  StepGenRateAddr&PadT,           StepGenNumRegs,         x"00",  StepGenMPBitMask),
 	(PWMTag,                x"00",  ClockHighTag,       x"05",  PWMValAddr&PadT,                PWMNumRegs,             x"00",  PWMMPBitMask),
 	(ADCTag,                x"00",  ClockLowTag,        x"01",  ADCAddr&PadT,                   ADCNumRegs,             x"00",  ADCMPBitMask),
-	(BSPITag,               x"00",  ClockLowTag,        x"03",  BSPIDataAddr&PadT,              BSPINumRegs,            x"11",  BSPIMPBitMask),
+	(BSPITag,               x"00",  ClockLowTag,        x"04",  BSPIDataAddr&PadT,              BSPINumRegs,            x"11",  BSPIMPBitMask),
 	(NullTag,               x"00",  NullTag,            x"00",  NullAddr&PadT,                  x"00",                  x"00",  x"00000000"),
 	(NullTag,               x"00",  NullTag,            x"00",  NullAddr&PadT,                  x"00",                  x"00",  x"00000000"),
 	(NullTag,               x"00",  NullTag,            x"00",  NullAddr&PadT,                  x"00",                  x"00",  x"00000000"),
@@ -156,11 +156,11 @@ package PIN_MOJO_DUEX5_72 is
 		IOPortTag & x"02" & BSPITag & BSPIClkPin,             -- I/O 38
 		IOPortTag & x"02" & BSPITag & BSPIOutPin,             -- I/O 39
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 40
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 41
+		IOPortTag & x"03" & BSPITag & BSPIClkPin,             -- I/O 41
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 42
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 43
+		IOPortTag & x"03" & BSPITag & BSPICS0Pin,             -- I/O 43
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 44
-		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 45
+		IOPortTag & x"03" & BSPITag & BSPIInPin,              -- I/O 45
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 46
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 47						
 		IOPortTag & x"00" & NullTag & x"00",                  -- I/O 48
